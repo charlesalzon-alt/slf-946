@@ -371,7 +371,7 @@
         <div class="text-subheading-m">Agent Instructions (Business Prompt)</div>
         <span class="var-hint">→ agent_instructions</span>
       </div>
-      <p class="text-body-s text-ph-body-sec mb-4">This prompt is sent as the <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{agent_instructions}}</code> variable. The knowledge base is always referenced separately in the ElevenLabs agent config.</p>
+      <p class="text-body-s text-ph-body-sec mb-4">This prompt is sent as the <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{agent_instructions}}</code> variable. The knowledge base is always referenced separately in the agent config.</p>
       <textarea id="agentInstructions" class="form-textarea"></textarea>
       <div class="flex items-center justify-between mt-2">
         <span class="text-body-s text-ph-body-sec"><span id="charCount">0</span> characters</span>
@@ -407,8 +407,8 @@
     <div class="card">
       <div class="collapsible-header" id="advancedToggle">
         <div>
-          <div class="text-subheading-m">ElevenLabs Configuration</div>
-          <p class="text-body-s text-ph-body-sec">Advanced voice, LLM, and telephony parameters</p>
+          <div class="text-subheading-m">Voice & Telephony Configuration</div>
+          <p class="text-body-s text-ph-body-sec">Advanced voice and telephony parameters</p>
         </div>
         <svg class="chevron" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
@@ -433,20 +433,6 @@
               <option value="zh">中文 (zh)</option>
             </select>
           </div>
-          <div>
-            <label class="form-label">LLM Model <span class="var-hint">→ llm</span></label>
-            <select id="elLlm" class="form-input">
-              <option value="">Agent default</option>
-              <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash</option>
-              <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-              <option value="gpt-4o-mini">GPT-4o Mini</option>
-              <option value="gpt-4o">GPT-4o</option>
-              <option value="gpt-4.1-mini">GPT-4.1 Mini</option>
-              <option value="gpt-4.1">GPT-4.1</option>
-              <option value="claude-3.5-sonnet">Claude 3.5 Sonnet</option>
-              <option value="claude-3-haiku">Claude 3 Haiku</option>
-            </select>
-          </div>
         </div>
 
         <!-- First Message -->
@@ -456,11 +442,17 @@
           <input type="text" id="elFirstMessage" class="form-input" placeholder="Hallo, {{customer_first_name}}?" />
         </div>
 
-        <!-- Voice ID -->
+        <!-- Voice -->
         <div>
-          <label class="form-label">Voice ID Override <span class="var-hint">→ voice_id</span></label>
-          <p class="form-sublabel">ElevenLabs voice ID. Leave blank for agent default.</p>
-          <input type="text" id="elVoiceId" class="form-input font-mono text-xs" placeholder="e.g. EXAVITQu4vr4xnSDxMaL" />
+          <label class="form-label">Voice <span class="var-hint">→ voice_id</span></label>
+          <p class="form-sublabel">Select a voice for the AI agent. Leave on "Agent default" to use the configured voice.</p>
+          <select id="elVoiceId" class="form-input">
+            <option value="">Agent default</option>
+            <option value="IWm8DnJ4NGjFI7QAM5lM">Stephan</option>
+            <option value="Cqbq4nsuUe1we6J45miU">Helmut</option>
+            <option value="DEZHhPbmb8LVZmWufkCh">Anna</option>
+            <option value="MGG5Irb57ATHvyIeTEYo">Maya</option>
+          </select>
         </div>
 
         <!-- TTS Sliders -->
@@ -500,17 +492,6 @@
           </div>
         </div>
 
-        <!-- Recording Toggle -->
-        <div class="flex items-center justify-between">
-          <div>
-            <label class="form-label mb-0">Call Recording <span class="var-hint">→ call_recording_enabled</span></label>
-            <p class="form-sublabel">Enable Twilio call recording for this session.</p>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="elRecording" />
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
       </div>
     </div>
 
@@ -584,7 +565,7 @@
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v1';
+    const STORAGE_KEY = 'ww-agent-sandbox-v2';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
@@ -634,7 +615,7 @@ Recap, confirm, and close: "Vielen Dank für Ihre Zeit, {{customer_first_name}}!
 - Never provide financial, legal, or tax advice
 - Never name specific rates, conditions, or payments
 - Respect "Nein" immediately
-- Never mention PriceHubble, ElevenLabs, or technology providers
+- Never mention PriceHubble or technology providers
 - Maintain formal register ("Sie")`,
 
       finanzierung_uc2uc3: `# Wüstenrot Finanzierung Bestandskunde Agent — v1
@@ -681,7 +662,7 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
 - Never recommend specific tariffs or products
 - Redirect to advisor for individual calculations
 - Respect "Nein" immediately
-- Never mention PriceHubble, ElevenLabs, or technology providers
+- Never mention PriceHubble or technology providers
 - Maintain formal register ("Sie")`
     };
 
@@ -694,7 +675,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
       agentIntro: '',
       phoneNumber: '',
       language: 'de',
-      llm: 'gemini-2.5-flash',
       firstMessage: '',
       voiceId: '',
       stability: 0.5,
@@ -702,7 +682,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
       speed: 1.0,
       ringTimeout: 60,
       maxDurationMsg: '',
-      recording: false,
     };
 
     /* ───────────────────────────────────────────────────────────────
@@ -722,7 +701,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
       advancedToggle: $('advancedToggle'),
       advancedPanel: $('advancedPanel'),
       elLanguage: $('elLanguage'),
-      elLlm: $('elLlm'),
       elFirstMessage: $('elFirstMessage'),
       elVoiceId: $('elVoiceId'),
       elStability: $('elStability'),
@@ -733,7 +711,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
       elSpeedVal: $('elSpeedVal'),
       elRingTimeout: $('elRingTimeout'),
       elMaxDurationMsg: $('elMaxDurationMsg'),
-      elRecording: $('elRecording'),
       phoneNumber: $('phoneNumber'),
       triggerBtn: $('triggerBtn'),
       statusBadge: $('statusBadge'),
@@ -788,7 +765,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
         agentIntro: els.agentIntro.value,
         phoneNumber: els.phoneNumber.value,
         language: els.elLanguage.value,
-        llm: els.elLlm.value,
         firstMessage: els.elFirstMessage.value,
         voiceId: els.elVoiceId.value,
         stability: parseFloat(els.elStability.value),
@@ -796,7 +772,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
         speed: parseFloat(els.elSpeed.value),
         ringTimeout: parseInt(els.elRingTimeout.value, 10),
         maxDurationMsg: els.elMaxDurationMsg.value,
-        recording: els.elRecording.checked,
         prompts: {
           leads_dsw: selectedAgent === 'leads_dsw' ? els.agentInstructions.value : (loadRaw().prompts?.leads_dsw || PROMPTS.leads_dsw),
           finanzierung_uc2uc3: selectedAgent === 'finanzierung_uc2uc3' ? els.agentInstructions.value : (loadRaw().prompts?.finanzierung_uc2uc3 || PROMPTS.finanzierung_uc2uc3),
@@ -819,7 +794,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
       if (d.agentIntro) els.agentIntro.value = d.agentIntro;
       if (d.phoneNumber) els.phoneNumber.value = d.phoneNumber;
       els.elLanguage.value = d.language || DEFAULTS.language;
-      els.elLlm.value = d.llm || DEFAULTS.llm;
       if (d.firstMessage) els.elFirstMessage.value = d.firstMessage;
       if (d.voiceId) els.elVoiceId.value = d.voiceId;
       els.elStability.value = d.stability ?? DEFAULTS.stability;
@@ -827,7 +801,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
       els.elSpeed.value = d.speed ?? DEFAULTS.speed;
       els.elRingTimeout.value = d.ringTimeout ?? DEFAULTS.ringTimeout;
       if (d.maxDurationMsg) els.elMaxDurationMsg.value = d.maxDurationMsg;
-      els.elRecording.checked = d.recording ?? DEFAULTS.recording;
 
       updateSliderDisplays();
       syncAgentPills();
@@ -945,9 +918,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
         language: v(els.elLanguage, DEFAULTS.language),
       };
 
-      const llm = v(els.elLlm);
-      if (llm) payload.llm = llm;
-
       const fm = v(els.elFirstMessage);
       if (fm) payload.first_message = fm;
 
@@ -958,7 +928,6 @@ Q3: "Haben Sie sich schon Gedanken über die Anschlussfinanzierung gemacht, oder
       payload.similarity_boost = parseFloat(els.elSimilarity.value);
       payload.speed = parseFloat(els.elSpeed.value);
       payload.ringing_timeout_secs = parseInt(els.elRingTimeout.value, 10) || 60;
-      payload.call_recording_enabled = els.elRecording.checked;
 
       const mdm = v(els.elMaxDurationMsg);
       if (mdm) payload.max_conversation_duration_message = mdm;
