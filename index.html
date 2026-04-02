@@ -328,6 +328,12 @@
   <!-- MAIN CONTENT -->
   <main class="max-w-4xl mx-auto px-6 py-8 space-y-6">
 
+    <!-- PROTOTYPE DISCLAIMER -->
+    <div style="display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border-radius: 10px; background: #eef2ff; border: 1px solid #c7d2fe;">
+      <span style="font-size: 18px; line-height: 22px; flex-shrink: 0;">🔬</span>
+      <p class="text-body-s" style="color: #3730a3; margin: 0;">This is an <strong>experimental prototype</strong> for testing AI agent configurability. It is not a production-ready feature or product from PriceHubble. Settings, prompts, and behaviour may change without notice.</p>
+    </div>
+
     <!-- SECTION 1: Agent Selection -->
     <div class="card">
       <div class="text-subheading-m mb-1">Agent Use Case</div>
@@ -348,11 +354,18 @@
         <div class="text-subheading-m">Agent Instructions (Business Prompt)</div>
         <span class="var-hint">→ agent_instructions</span>
       </div>
-      <p class="text-body-s text-ph-body-sec mb-4">This prompt is sent as the <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{agent_instructions}}</code> variable. The knowledge base is always referenced separately in the agent config.</p>
+      <p class="text-body-s text-ph-body-sec mb-3">This prompt is sent as the <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{agent_instructions}}</code> variable. The knowledge base is always referenced separately in the agent config.</p>
+      <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: 8px; background: var(--color-semantic-warning-bg); border: 1px solid #f0d78e; margin-bottom: 12px;">
+        <span style="font-size: 16px; line-height: 20px; flex-shrink: 0;">⚠</span>
+        <p class="text-body-s" style="color: var(--color-semantic-warning-fill); margin: 0;">Changes to this prompt are <strong>not saved automatically</strong>. After editing, use the <strong>Copy</strong> button below and save the prompt externally (e.g. in a document or note) before leaving the page.</p>
+      </div>
       <textarea id="agentInstructions" class="form-textarea"></textarea>
       <div class="flex items-center justify-between mt-2">
         <span class="text-body-s text-ph-body-sec"><span id="charCount">0</span> characters</span>
-        <button id="resetPromptBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">Reset to default</button>
+        <div class="flex items-center gap-3">
+          <button id="copyPromptBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">&#128203; Copy</button>
+          <button id="resetPromptBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">Reset to default</button>
+        </div>
       </div>
     </div>
 
@@ -1218,7 +1231,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v7';
+    const STORAGE_KEY = 'ww-agent-sandbox-v8';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
@@ -1257,6 +1270,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       agentPills: $('agentPills'),
       agentInstructions: $('agentInstructions'),
       charCount: $('charCount'),
+      copyPromptBtn: $('copyPromptBtn'),
       resetPromptBtn: $('resetPromptBtn'),
       customerFirstName: $('customerFirstName'),
       advisorName: $('advisorName'),
@@ -1414,6 +1428,20 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     }
 
     els.agentInstructions.addEventListener('input', updateCharCount);
+
+    els.copyPromptBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(els.agentInstructions.value).then(() => {
+        els.copyPromptBtn.textContent = '✓ Copied!';
+        setTimeout(() => { els.copyPromptBtn.innerHTML = '&#128203; Copy'; }, 2000);
+        log('Prompt copied to clipboard');
+      }).catch(() => {
+        els.agentInstructions.select();
+        document.execCommand('copy');
+        els.copyPromptBtn.textContent = '✓ Copied!';
+        setTimeout(() => { els.copyPromptBtn.innerHTML = '&#128203; Copy'; }, 2000);
+        log('Prompt copied to clipboard (fallback)');
+      });
+    });
 
     els.resetPromptBtn.addEventListener('click', () => {
       els.agentInstructions.value = PROMPTS[selectedAgent] || '';
