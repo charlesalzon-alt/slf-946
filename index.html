@@ -308,6 +308,18 @@
       color: var(--color-semantic-warning-fill);
       margin-left: 6px;
     }
+    .test-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #dcfce7;
+      color: #166534;
+      margin-left: 6px;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -339,8 +351,8 @@
       <div class="text-subheading-m mb-1">Agent Use Case</div>
       <p class="text-body-s text-ph-body-sec mb-4">Select which AI agent behaviour to trigger for this call.</p>
       <div class="pill-group" id="agentPills">
-        <button class="pill active" data-agent="leads_dsw">Leads / Tips Handling (DSW)</button>
-        <button class="pill" data-agent="finanzierung_uc2uc3">Finanzierung Bestandskunde (UC2+UC3)</button>
+        <button class="pill active" data-agent="leads_dsw">Leads / Tips Handling (DSW)<span class="test-badge">Test</span></button>
+        <button class="pill" data-agent="finanzierung_uc2uc3">Finanzierung Bestandskunde (UC2+UC3)<span class="test-badge">Test</span></button>
         <button class="pill disabled">Profil vervollständigen<span class="coming-soon-badge">Soon</span></button>
         <button class="pill disabled">Kaufinteresse<span class="coming-soon-badge">Soon</span></button>
         <button class="pill disabled">Fördermöglichkeiten<span class="coming-soon-badge">Soon</span></button>
