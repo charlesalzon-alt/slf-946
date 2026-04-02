@@ -436,6 +436,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label class="form-label">Stability <span class="var-hint">→ stability</span></label>
+            <p class="form-sublabel">How consistent the voice sounds. Lower = more expressive, higher = more monotone.</p>
             <div class="flex items-center gap-3">
               <input type="range" id="elStability" class="range-slider flex-1" min="0" max="1" step="0.05" value="0.5" />
               <span id="elStabilityVal" class="text-body-s font-mono w-8 text-right">0.5</span>
@@ -443,6 +444,7 @@
           </div>
           <div>
             <label class="form-label">Similarity <span class="var-hint">→ similarity_boost</span></label>
+            <p class="form-sublabel">How closely the output matches the original voice. Higher = more faithful to the voice profile.</p>
             <div class="flex items-center gap-3">
               <input type="range" id="elSimilarity" class="range-slider flex-1" min="0" max="1" step="0.05" value="0.75" />
               <span id="elSimilarityVal" class="text-body-s font-mono w-8 text-right">0.75</span>
@@ -450,6 +452,7 @@
           </div>
           <div>
             <label class="form-label">Speed <span class="var-hint">→ speed</span></label>
+            <p class="form-sublabel">Speaking rate multiplier. 1.0 = natural pace, lower = slower, higher = faster.</p>
             <div class="flex items-center gap-3">
               <input type="range" id="elSpeed" class="range-slider flex-1" min="0.5" max="2.0" step="0.05" value="1.0" />
               <span id="elSpeedVal" class="text-body-s font-mono w-8 text-right">1.0</span>
@@ -461,10 +464,12 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="form-label">Ring Timeout (seconds) <span class="var-hint">→ ringing_timeout_secs</span></label>
+            <p class="form-sublabel">How long to ring before giving up. Default 60s.</p>
             <input type="number" id="elRingTimeout" class="form-input" value="60" min="10" max="120" />
           </div>
           <div>
             <label class="form-label">Max Duration Message <span class="var-hint">→ max_conversation_duration_message</span></label>
+            <p class="form-sublabel">Message spoken by the agent when the call reaches its max duration limit.</p>
             <input type="text" id="elMaxDurationMsg" class="form-input" placeholder="Optional message when max duration reached" />
           </div>
         </div>
@@ -1213,11 +1218,11 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v6';
+    const STORAGE_KEY = 'ww-agent-sandbox-v7';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
-    const WEBHOOK_URL = 'https://pricehubble.activepieces.com/api/v1/webhooks/5STGbhqgP6R9FYjXgbeRn/sync';
+    const WEBHOOK_URL = 'https://pricehubble.activepieces.com/api/v1/webhooks/LBvlQS0tr0B5u3ZIojq5K/sync';
 
     /* ── Agent Prompts (loaded from <script type="text/plain"> tags) */
 
