@@ -408,10 +408,6 @@
           <label class="form-label">Brand Name <span class="var-hint">→ brand_name</span></label>
           <input type="text" id="brandName" class="form-input" value="Wüstenrot" />
         </div>
-        <div>
-          <label class="form-label">AI Agent Name <span class="var-hint">→ ai_agent_name</span></label>
-          <input type="text" id="aiAgentName" class="form-input" value="Lisa" />
-        </div>
       </div>
     </div>
 
@@ -460,12 +456,19 @@
           <p class="form-sublabel">Select a voice for the AI agent. Leave on "Agent default" to use the configured voice.</p>
           <select id="elVoiceId" class="form-input">
             <option value="">Agent default</option>
-            <option value="IWm8DnJ4NGjFI7QAM5lM" selected>Stephan</option>
+            <option value="IWm8DnJ4NGjFI7QAM5lM">Stephan</option>
             <option value="Cqbq4nsuUe1we6J45miU">Helmut</option>
-            <option value="DEZHhPbmb8LVZmWufkCh">Anna</option>
+            <option value="DEZHhPbmb8LVZmWufkCh" selected>Anna</option>
             <option value="MGG5Irb57ATHvyIeTEYo">Maya</option>
           </select>
-          <div id="voiceIdHint" class="mt-1" style="font-size: 11px; color: #9ca3af; font-family: 'JetBrains Mono', monospace;"></div>
+          <div id="voiceIdHint" class="mt-1" style="font-size: 13px; color: #9ca3af; font-family: 'JetBrains Mono', monospace;"></div>
+        </div>
+
+        <!-- AI Agent Name (linked to voice selection) -->
+        <div>
+          <label class="form-label">AI Agent Name <span class="var-hint">→ ai_agent_name</span></label>
+          <p class="form-sublabel">Auto-filled based on the selected voice. You can override it.</p>
+          <input type="text" id="aiAgentName" class="form-input" value="Anna" />
         </div>
 
         <!-- TTS Sliders -->
@@ -1237,7 +1240,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v14';
+    const STORAGE_KEY = 'ww-agent-sandbox-v15';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
@@ -1255,11 +1258,11 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       customerFirstName: 'Karl',
       advisorName: 'Ihr Wüstenrot Berater',
       brandName: 'Wüstenrot',
-      aiAgentName: 'Lisa',
+      aiAgentName: 'Anna',
       phoneNumber: '491701234567',
       language: 'de',
       firstMessage: 'Hallo, {{customer_first_name}}?',
-      voiceId: 'IWm8DnJ4NGjFI7QAM5lM',
+      voiceId: 'DEZHhPbmb8LVZmWufkCh',
       stability: 0.5,
       similarity: 0.75,
       speed: 1.0,
@@ -1426,13 +1429,30 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       els.elSpeedVal.textContent = parseFloat(els.elSpeed.value).toFixed(2);
     }
 
+    const VOICE_NAMES = {
+      'IWm8DnJ4NGjFI7QAM5lM': 'Stephan',
+      'Cqbq4nsuUe1we6J45miU': 'Helmut',
+      'DEZHhPbmb8LVZmWufkCh': 'Anna',
+      'MGG5Irb57ATHvyIeTEYo': 'Maya',
+    };
+
     function updateVoiceIdHint() {
       const val = els.elVoiceId.value;
       els.voiceIdHint.textContent = val ? val : '';
     }
 
+    function syncAgentNameToVoice() {
+      const vid = els.elVoiceId.value;
+      if (VOICE_NAMES[vid]) {
+        els.aiAgentName.value = VOICE_NAMES[vid];
+      }
+    }
+
     els.agentInstructions.addEventListener('input', updateCharCount);
-    els.elVoiceId.addEventListener('change', updateVoiceIdHint);
+    els.elVoiceId.addEventListener('change', () => {
+      updateVoiceIdHint();
+      syncAgentNameToVoice();
+    });
 
     els.copyPromptBtn.addEventListener('click', () => {
       navigator.clipboard.writeText(els.agentInstructions.value).then(() => {
