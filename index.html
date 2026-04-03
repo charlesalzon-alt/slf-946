@@ -399,6 +399,10 @@
           <input type="text" id="companyName" class="form-input" value="Wüstenrot" />
         </div>
         <div>
+          <label class="form-label">AI Agent Name <span class="var-hint">→ ai_agent_name</span></label>
+          <input type="text" id="aiAgentName" class="form-input" value="Lisa" />
+        </div>
+        <div>
           <label class="form-label">Agent Intro <span class="var-hint">→ agent_intro</span></label>
           <input type="text" id="agentIntro" class="form-input" value="Guten Tag, hier spricht der digitale Assistent von Wüstenrot." />
         </div>
@@ -1243,7 +1247,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v9';
+    const STORAGE_KEY = 'ww-agent-sandbox-v10';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
@@ -1261,6 +1265,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       customerFirstName: 'Karl',
       advisorName: 'Ihr Wüstenrot Berater',
       companyName: 'Wüstenrot',
+      aiAgentName: 'Lisa',
       agentIntro: 'Guten Tag, hier spricht der digitale Assistent von Wüstenrot.',
       phoneNumber: '491701234567',
       language: 'de',
@@ -1287,6 +1292,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       customerFirstName: $('customerFirstName'),
       advisorName: $('advisorName'),
       companyName: $('companyName'),
+      aiAgentName: $('aiAgentName'),
       agentIntro: $('agentIntro'),
       advancedToggle: $('advancedToggle'),
       advancedPanel: $('advancedPanel'),
@@ -1345,6 +1351,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
         customerFirstName: els.customerFirstName.value,
         advisorName: els.advisorName.value,
         companyName: els.companyName.value,
+        aiAgentName: els.aiAgentName.value,
         agentIntro: els.agentIntro.value,
         phoneNumber: els.phoneNumber.value,
         language: els.elLanguage.value,
@@ -1373,6 +1380,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       els.customerFirstName.value = d.customerFirstName || DEFAULTS.customerFirstName;
       els.advisorName.value = d.advisorName || DEFAULTS.advisorName;
       els.companyName.value = d.companyName || DEFAULTS.companyName;
+      els.aiAgentName.value = d.aiAgentName || DEFAULTS.aiAgentName;
       els.agentIntro.value = d.agentIntro || DEFAULTS.agentIntro;
       els.phoneNumber.value = d.phoneNumber || DEFAULTS.phoneNumber;
       els.elLanguage.value = d.language || DEFAULTS.language;
@@ -1488,6 +1496,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
         customer_first_name: v(els.customerFirstName),
         advisor_name: v(els.advisorName, DEFAULTS.advisorName),
         company_name: v(els.companyName, DEFAULTS.companyName),
+        ai_agent_name: v(els.aiAgentName, DEFAULTS.aiAgentName),
         agent_intro: v(els.agentIntro),
         language: v(els.elLanguage, DEFAULTS.language),
       };
