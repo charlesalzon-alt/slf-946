@@ -388,7 +388,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="form-label">Customer First Name <span class="var-hint">→ customer_first_name</span></label>
-          <input type="text" id="customerFirstName" class="form-input" placeholder="Thomas" />
+          <input type="text" id="customerFirstName" class="form-input" value="Karl" />
         </div>
         <div>
           <label class="form-label">Advisor Name <span class="var-hint">→ advisor_name</span></label>
@@ -400,7 +400,7 @@
         </div>
         <div>
           <label class="form-label">Agent Intro <span class="var-hint">→ agent_intro</span></label>
-          <input type="text" id="agentIntro" class="form-input" placeholder="Custom opening line (optional)" />
+          <input type="text" id="agentIntro" class="form-input" value="Guten Tag, hier spricht der digitale Assistent von Wüstenrot." />
         </div>
       </div>
     </div>
@@ -441,7 +441,7 @@
         <div>
           <label class="form-label">First Message Override <span class="var-hint">→ first_message</span></label>
           <p class="form-sublabel">Leave blank to use the agent's default first message.</p>
-          <input type="text" id="elFirstMessage" class="form-input" placeholder="Hallo, {{customer_first_name}}?" />
+          <input type="text" id="elFirstMessage" class="form-input" value="Hallo, {{customer_first_name}}?" />
         </div>
 
         <!-- Voice -->
@@ -450,7 +450,7 @@
           <p class="form-sublabel">Select a voice for the AI agent. Leave on "Agent default" to use the configured voice.</p>
           <select id="elVoiceId" class="form-input">
             <option value="">Agent default</option>
-            <option value="IWm8DnJ4NGjFI7QAM5lM">Stephan</option>
+            <option value="IWm8DnJ4NGjFI7QAM5lM" selected>Stephan</option>
             <option value="Cqbq4nsuUe1we6J45miU">Helmut</option>
             <option value="DEZHhPbmb8LVZmWufkCh">Anna</option>
             <option value="MGG5Irb57ATHvyIeTEYo">Maya</option>
@@ -495,7 +495,7 @@
           <div>
             <label class="form-label">Max Duration Message <span class="var-hint">→ max_conversation_duration_message</span></label>
             <p class="form-sublabel">Message spoken by the agent when the call reaches its max duration limit.</p>
-            <input type="text" id="elMaxDurationMsg" class="form-input" placeholder="Optional message when max duration reached" />
+            <input type="text" id="elMaxDurationMsg" class="form-input" value="Vielen Dank für das Gespräch. Ich muss jetzt leider auflegen. Ihr Berater wird sich bei Ihnen melden." />
           </div>
         </div>
 
@@ -510,7 +510,7 @@
           <label class="form-label">Phone Number <span class="var-hint">→ phone_number</span></label>
           <div class="flex">
             <span class="inline-flex items-center px-3 border border-r-0 rounded-l-lg text-body-s font-semibold" style="background: var(--color-core-neutral-100); border-color: var(--color-semantic-default-stroke); color: var(--color-semantic-heading-text);">+</span>
-            <input type="tel" id="phoneNumber" class="form-input rounded-l-none" placeholder="491234567890" style="border-top-left-radius: 0; border-bottom-left-radius: 0;" />
+            <input type="tel" id="phoneNumber" class="form-input rounded-l-none" value="491701234567" style="border-top-left-radius: 0; border-bottom-left-radius: 0;" />
           </div>
         </div>
         <button id="triggerBtn" class="btn-primary w-full sm:w-auto whitespace-nowrap">
@@ -1243,7 +1243,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v8';
+    const STORAGE_KEY = 'ww-agent-sandbox-v9';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
@@ -1258,19 +1258,19 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
 
     /* ── Default Settings ──────────────────────────────────────── */
     const DEFAULTS = {
-      customerFirstName: '',
+      customerFirstName: 'Karl',
       advisorName: 'Ihr Wüstenrot Berater',
       companyName: 'Wüstenrot',
-      agentIntro: '',
-      phoneNumber: '',
+      agentIntro: 'Guten Tag, hier spricht der digitale Assistent von Wüstenrot.',
+      phoneNumber: '491701234567',
       language: 'de',
-      firstMessage: '',
-      voiceId: '',
+      firstMessage: 'Hallo, {{customer_first_name}}?',
+      voiceId: 'IWm8DnJ4NGjFI7QAM5lM',
       stability: 0.5,
       similarity: 0.75,
       speed: 1.0,
       ringTimeout: 60,
-      maxDurationMsg: '',
+      maxDurationMsg: 'Vielen Dank für das Gespräch. Ich muss jetzt leider auflegen. Ihr Berater wird sich bei Ihnen melden.',
     };
 
     /* ───────────────────────────────────────────────────────────────
@@ -1370,19 +1370,19 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     function loadConfig() {
       const d = loadRaw();
       if (d.selectedAgent) selectedAgent = d.selectedAgent;
-      if (d.customerFirstName) els.customerFirstName.value = d.customerFirstName;
+      els.customerFirstName.value = d.customerFirstName || DEFAULTS.customerFirstName;
       els.advisorName.value = d.advisorName || DEFAULTS.advisorName;
       els.companyName.value = d.companyName || DEFAULTS.companyName;
-      if (d.agentIntro) els.agentIntro.value = d.agentIntro;
-      if (d.phoneNumber) els.phoneNumber.value = d.phoneNumber;
+      els.agentIntro.value = d.agentIntro || DEFAULTS.agentIntro;
+      els.phoneNumber.value = d.phoneNumber || DEFAULTS.phoneNumber;
       els.elLanguage.value = d.language || DEFAULTS.language;
-      if (d.firstMessage) els.elFirstMessage.value = d.firstMessage;
-      if (d.voiceId) els.elVoiceId.value = d.voiceId;
+      els.elFirstMessage.value = d.firstMessage || DEFAULTS.firstMessage;
+      els.elVoiceId.value = d.voiceId || DEFAULTS.voiceId;
       els.elStability.value = d.stability ?? DEFAULTS.stability;
       els.elSimilarity.value = d.similarity ?? DEFAULTS.similarity;
       els.elSpeed.value = d.speed ?? DEFAULTS.speed;
       els.elRingTimeout.value = d.ringTimeout ?? DEFAULTS.ringTimeout;
-      if (d.maxDurationMsg) els.elMaxDurationMsg.value = d.maxDurationMsg;
+      els.elMaxDurationMsg.value = d.maxDurationMsg || DEFAULTS.maxDurationMsg;
 
       updateSliderDisplays();
       syncAgentPills();
