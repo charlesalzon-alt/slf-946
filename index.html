@@ -413,8 +413,8 @@
     <div class="card">
       <div class="collapsible-header" id="advancedToggle">
         <div>
-          <div class="text-subheading-m">Voice & Telephony Configuration</div>
-          <p class="text-body-s text-ph-body-sec">Advanced voice and telephony parameters</p>
+          <div class="text-subheading-m">Voice Configuration</div>
+          <p class="text-body-s text-ph-body-sec">Advanced voice parameters</p>
         </div>
         <svg class="chevron" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
@@ -490,19 +490,6 @@
           </div>
         </div>
 
-        <!-- Telephony -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="form-label">Ring Timeout (seconds) <span class="var-hint">→ ringing_timeout_secs</span></label>
-            <p class="form-sublabel">How long to ring before giving up. Default 60s.</p>
-            <input type="number" id="elRingTimeout" class="form-input" value="60" min="10" max="120" />
-          </div>
-          <div>
-            <label class="form-label">Max Duration Message <span class="var-hint">→ max_conversation_duration_message</span></label>
-            <p class="form-sublabel">Message spoken by the agent when the call reaches its max duration limit.</p>
-            <input type="text" id="elMaxDurationMsg" class="form-input" value="Vielen Dank für das Gespräch. Ich muss jetzt leider auflegen. Ihr Berater wird sich bei Ihnen melden." />
-          </div>
-        </div>
 
       </div>
     </div>
@@ -1248,7 +1235,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v10';
+    const STORAGE_KEY = 'ww-agent-sandbox-v11';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
@@ -1275,8 +1262,6 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       stability: 0.5,
       similarity: 0.75,
       speed: 1.0,
-      ringTimeout: 60,
-      maxDurationMsg: 'Vielen Dank für das Gespräch. Ich muss jetzt leider auflegen. Ihr Berater wird sich bei Ihnen melden.',
     };
 
     /* ───────────────────────────────────────────────────────────────
@@ -1307,8 +1292,6 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       elSimilarityVal: $('elSimilarityVal'),
       elSpeed: $('elSpeed'),
       elSpeedVal: $('elSpeedVal'),
-      elRingTimeout: $('elRingTimeout'),
-      elMaxDurationMsg: $('elMaxDurationMsg'),
       phoneNumber: $('phoneNumber'),
       triggerBtn: $('triggerBtn'),
       statusBadge: $('statusBadge'),
@@ -1362,8 +1345,6 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
         stability: parseFloat(els.elStability.value),
         similarity: parseFloat(els.elSimilarity.value),
         speed: parseFloat(els.elSpeed.value),
-        ringTimeout: parseInt(els.elRingTimeout.value, 10),
-        maxDurationMsg: els.elMaxDurationMsg.value,
         prompts: {
           leads_dsw: selectedAgent === 'leads_dsw' ? els.agentInstructions.value : (loadRaw().prompts?.leads_dsw || PROMPTS.leads_dsw),
           finanzierung_uc2uc3: selectedAgent === 'finanzierung_uc2uc3' ? els.agentInstructions.value : (loadRaw().prompts?.finanzierung_uc2uc3 || PROMPTS.finanzierung_uc2uc3),
@@ -1391,8 +1372,6 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       els.elStability.value = d.stability ?? DEFAULTS.stability;
       els.elSimilarity.value = d.similarity ?? DEFAULTS.similarity;
       els.elSpeed.value = d.speed ?? DEFAULTS.speed;
-      els.elRingTimeout.value = d.ringTimeout ?? DEFAULTS.ringTimeout;
-      els.elMaxDurationMsg.value = d.maxDurationMsg || DEFAULTS.maxDurationMsg;
 
       updateSliderDisplays();
       syncAgentPills();
@@ -1518,11 +1497,6 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       payload.stability = parseFloat(els.elStability.value);
       payload.similarity_boost = parseFloat(els.elSimilarity.value);
       payload.speed = parseFloat(els.elSpeed.value);
-      payload.ringing_timeout_secs = parseInt(els.elRingTimeout.value, 10) || 60;
-
-      const mdm = v(els.elMaxDurationMsg);
-      if (mdm) payload.max_conversation_duration_message = mdm;
-
       return payload;
     }
 
