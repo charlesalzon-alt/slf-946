@@ -493,6 +493,31 @@
       </div>
     </div>
 
+    <!-- SECTION 4b: SMS Pre-warning -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-1">
+        <div>
+          <div class="text-subheading-m">SMS Pre-warning</div>
+          <p class="text-body-s text-ph-body-sec">Send an SMS to the customer a few seconds before the AI agent calls, so they expect the call.</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="smsEnabled" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div id="smsPanel" class="mt-4 space-y-3">
+        <div>
+          <label class="form-label">SMS Template <span class="var-hint">→ sms_preview</span></label>
+          <p class="form-sublabel">Supports <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{customer_first_name}}</code>, <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{brand_name}}</code>, <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{ai_agent_name}}</code>. Variables are resolved server-side before sending.</p>
+          <textarea id="smsPreview" class="form-textarea" style="min-height: 80px; font-size: 14px; font-family: 'Inter', sans-serif;"></textarea>
+          <div class="flex items-center justify-between mt-2">
+            <span class="text-body-s text-ph-body-sec"><span id="smsCharCount">0</span> characters</span>
+            <button id="resetSmsBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">Reset to default</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- SECTION 5: Phone + Trigger -->
     <div class="card">
       <div class="text-subheading-m mb-4">Trigger AI Callback</div>
@@ -1230,7 +1255,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v16';
+    const STORAGE_KEY = 'ww-agent-sandbox-v17';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
@@ -1256,6 +1281,11 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       stability: 0.5,
       similarity: 0.75,
       speed: 1.0,
+    };
+
+    const SMS_TEMPLATES = {
+      de: 'Hallo {{customer_first_name}}, hier ist {{brand_name}}. In wenigen Sekunden erhalten Sie einen kurzen Anruf von unserer digitalen Assistentin {{ai_agent_name}}. Bitte nehmen Sie den Anruf an — es dauert nur einen Moment. Vielen Dank!',
+      en: 'Hi {{customer_first_name}}, this is {{brand_name}}. In a few seconds you will receive a short call from our digital assistant {{ai_agent_name}}. Please answer the call — it will only take a moment. Thank you!',
     };
 
     /* ───────────────────────────────────────────────────────────────
@@ -1293,6 +1323,11 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       payloadPreview: $('payloadPreview'),
       logContainer: $('logContainer'),
       clearLogBtn: $('clearLogBtn'),
+      smsEnabled: $('smsEnabled'),
+      smsPanel: $('smsPanel'),
+      smsPreview: $('smsPreview'),
+      smsCharCount: $('smsCharCount'),
+      resetSmsBtn: $('resetSmsBtn'),
     };
 
     /* ───────────────────────────────────────────────────────────────
@@ -1337,6 +1372,8 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
         stability: parseFloat(els.elStability.value),
         similarity: parseFloat(els.elSimilarity.value),
         speed: parseFloat(els.elSpeed.value),
+        smsEnabled: els.smsEnabled.checked,
+        smsPreview: els.smsPreview.value,
         prompts: {
           leads_dsw: selectedAgent === 'leads_dsw' ? els.agentInstructions.value : (loadRaw().prompts?.leads_dsw || PROMPTS.leads_dsw),
           finanzierung_uc2uc3: selectedAgent === 'finanzierung_uc2uc3' ? els.agentInstructions.value : (loadRaw().prompts?.finanzierung_uc2uc3 || PROMPTS.finanzierung_uc2uc3),
@@ -1363,6 +1400,11 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       els.elStability.value = d.stability ?? DEFAULTS.stability;
       els.elSimilarity.value = d.similarity ?? DEFAULTS.similarity;
       els.elSpeed.value = d.speed ?? DEFAULTS.speed;
+
+      els.smsEnabled.checked = d.smsEnabled !== false;
+      els.smsPreview.value = d.smsPreview || SMS_TEMPLATES[d.language || DEFAULTS.language] || SMS_TEMPLATES.de;
+      updateSmsPanel();
+      updateSmsCharCount();
 
       updateSliderDisplays();
       syncAgentPills();
@@ -1447,8 +1489,37 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       }
     }
 
+    function updateSmsCharCount() {
+      els.smsCharCount.textContent = els.smsPreview.value.length.toLocaleString();
+    }
+
+    function updateSmsPanel() {
+      els.smsPanel.style.opacity = els.smsEnabled.checked ? '1' : '0.4';
+      els.smsPreview.disabled = !els.smsEnabled.checked;
+    }
+
+    function syncSmsToLanguage() {
+      const lang = els.elLanguage.value;
+      if (SMS_TEMPLATES[lang]) {
+        els.smsPreview.value = SMS_TEMPLATES[lang];
+        updateSmsCharCount();
+      }
+    }
+
+    els.smsEnabled.addEventListener('change', () => { updateSmsPanel(); saveConfig(); });
+    els.smsPreview.addEventListener('input', updateSmsCharCount);
+    els.resetSmsBtn.addEventListener('click', () => {
+      els.smsPreview.value = SMS_TEMPLATES[els.elLanguage.value] || SMS_TEMPLATES.de;
+      updateSmsCharCount();
+      saveConfig();
+      log('SMS template reset to default');
+    });
+
     els.agentInstructions.addEventListener('input', updateCharCount);
-    els.elLanguage.addEventListener('change', syncFirstMessageToLanguage);
+    els.elLanguage.addEventListener('change', () => {
+      syncFirstMessageToLanguage();
+      syncSmsToLanguage();
+    });
     els.elVoiceId.addEventListener('change', () => {
       updateVoiceIdHint();
       syncAgentNameToVoice();
@@ -1514,6 +1585,12 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       payload.stability = parseFloat(els.elStability.value);
       payload.similarity_boost = parseFloat(els.elSimilarity.value);
       payload.speed = parseFloat(els.elSpeed.value);
+
+      payload.sms_enabled = els.smsEnabled.checked;
+      if (els.smsEnabled.checked) {
+        payload.sms_preview = els.smsPreview.value;
+      }
+
       return payload;
     }
 
