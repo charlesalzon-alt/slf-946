@@ -429,16 +429,6 @@
             <select id="elLanguage" class="form-input">
               <option value="de" selected>Deutsch (de)</option>
               <option value="en">English (en)</option>
-              <option value="fr">Français (fr)</option>
-              <option value="it">Italiano (it)</option>
-              <option value="es">Español (es)</option>
-              <option value="nl">Nederlands (nl)</option>
-              <option value="pl">Polski (pl)</option>
-              <option value="pt">Português (pt)</option>
-              <option value="tr">Türkçe (tr)</option>
-              <option value="ja">日本語 (ja)</option>
-              <option value="ko">한국어 (ko)</option>
-              <option value="zh">中文 (zh)</option>
             </select>
           </div>
         </div>
@@ -1448,7 +1438,17 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       }
     }
 
+    const FIRST_MESSAGES = { de: 'Hallo?', en: 'Hello?' };
+
+    function syncFirstMessageToLanguage() {
+      const lang = els.elLanguage.value;
+      if (FIRST_MESSAGES[lang]) {
+        els.elFirstMessage.value = FIRST_MESSAGES[lang];
+      }
+    }
+
     els.agentInstructions.addEventListener('input', updateCharCount);
+    els.elLanguage.addEventListener('change', syncFirstMessageToLanguage);
     els.elVoiceId.addEventListener('change', () => {
       updateVoiceIdHint();
       syncAgentNameToVoice();
