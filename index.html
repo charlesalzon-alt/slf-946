@@ -562,7 +562,6 @@
 | `{{customer_first_name}}` | Thomas | Customer's first name from the lead/tip data. Usually available. |
 | `{{advisor_name}}` | Herr Weber | The advisor the appointment is for. Fallback: "einem {{brand_name}} Berater". May be empty. |
 | `{{company_name}}` | Wüstenrot | Company name. Always present. |
-| `{{agent_intro}}` | (see below) | Custom intro text. May override the default opening. |
 | `{{agent_instructions}}` | (full prompt) | The business prompt injected from the sandbox. Contains this entire instruction set. |
 | `{{language_spoken}}` | de | Conversation language. Defaults to `de`. |
 | `{{leadId}}` | uuid | Internal lead ID. Never expose to customer. |
@@ -593,8 +592,6 @@ Ich rufe an, weil wir eine Anfrage von Ihnen erhalten haben — und ich
 sicherstellen möchte, dass Sie zeitnah mit dem richtigen Berater
 verbunden werden. Haben Sie einen kurzen Moment?
 ```
-
-If `{{agent_intro}}` is provided and non-empty, use that text instead of the default second message.
 
 **If the customer says no / bad time:**
 
@@ -1231,7 +1228,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v12';
+    const STORAGE_KEY = 'ww-agent-sandbox-v13';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
