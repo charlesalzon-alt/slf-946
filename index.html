@@ -459,6 +459,7 @@
             <option value="DEZHhPbmb8LVZmWufkCh">Anna</option>
             <option value="MGG5Irb57ATHvyIeTEYo">Maya</option>
           </select>
+          <div id="voiceIdHint" class="mt-1" style="font-size: 11px; color: #9ca3af; font-family: 'JetBrains Mono', monospace;"></div>
         </div>
 
         <!-- TTS Sliders -->
@@ -1299,6 +1300,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       elLanguage: $('elLanguage'),
       elFirstMessage: $('elFirstMessage'),
       elVoiceId: $('elVoiceId'),
+      voiceIdHint: $('voiceIdHint'),
       elStability: $('elStability'),
       elStabilityVal: $('elStabilityVal'),
       elSimilarity: $('elSimilarity'),
@@ -1447,7 +1449,13 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       els.elSpeedVal.textContent = parseFloat(els.elSpeed.value).toFixed(2);
     }
 
+    function updateVoiceIdHint() {
+      const val = els.elVoiceId.value;
+      els.voiceIdHint.textContent = val ? val : '';
+    }
+
     els.agentInstructions.addEventListener('input', updateCharCount);
+    els.elVoiceId.addEventListener('change', updateVoiceIdHint);
 
     els.copyPromptBtn.addEventListener('click', () => {
       navigator.clipboard.writeText(els.agentInstructions.value).then(() => {
@@ -1623,6 +1631,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
        INIT
     ─────────────────────────────────────────────────────────────── */
     loadConfig();
+    updateVoiceIdHint();
     log('Loaded agent: ' + selectedAgent);
   </script>
 </body>
