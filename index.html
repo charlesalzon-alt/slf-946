@@ -138,6 +138,15 @@
       font-size: 12px;
       color: var(--color-core-neutral-500);
       font-weight: 400;
+      display: none;
+    }
+    body.dev-mode .var-hint { display: inline; }
+    .dev-only { display: none; }
+    body.dev-mode .dev-only { display: inline-flex; }
+    body.dev-mode #devModeToggle {
+      background: var(--color-core-primary-50) !important;
+      color: var(--color-component-button-primary-default-bg) !important;
+      border-color: var(--color-component-button-primary-default-bg) !important;
     }
 
     .form-input {
@@ -334,6 +343,9 @@
           <div class="text-body-s text-ph-body-sec">Configure, test & trigger AI outbound calls</div>
         </div>
       </div>
+      <button id="devModeToggle" onclick="toggleDevMode()" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid var(--color-semantic-default-stroke); background: var(--color-component-form-default-bg); color: var(--color-core-neutral-500); cursor: pointer; font-family: 'JetBrains Mono', monospace; transition: all 0.15s;">
+        <span style="font-size: 14px;">{ }</span> Dev
+      </button>
     </div>
   </header>
 
@@ -358,7 +370,7 @@
 
     <!-- SECTION 1: Agent Selection -->
     <div class="card">
-      <div class="text-subheading-m mb-1">Select an agent Use Case</div>
+      <div class="text-subheading-m mb-1">Select an agent use case</div>
       <p class="text-body-s text-ph-body-sec mb-4">Choose which AI agent behaviour to trigger for this call.</p>
       <div class="pill-group" id="agentPills">
         <button class="pill active" data-agent="leads_dsw">Leads / Tips Handling (DSW)<span class="test-badge">Test</span></button>
@@ -373,10 +385,10 @@
     <!-- SECTION 2: Business Prompt -->
     <div class="card">
       <div class="flex items-center justify-between mb-1">
-        <div class="text-subheading-m">Edit agent instructions (Business prompt)</div>
+        <div class="text-subheading-m">Agent Instructions</div>
         <span class="var-hint">→ agent_instructions</span>
       </div>
-      <p class="text-body-s text-ph-body-sec mb-3">This prompt is sent as the <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{agent_instructions}}</code> variable. The knowledge base is always referenced separately in the agent config.</p>
+      <p class="text-body-s text-ph-body-sec mb-3">The main script that guides the AI agent's behaviour during the call. The knowledge base is always included separately.</p>
       <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: 8px; background: var(--color-semantic-warning-bg); border: 1px solid #f0d78e; margin-bottom: 12px;">
         <span style="font-size: 16px; line-height: 20px; flex-shrink: 0;">⚠</span>
         <p class="text-body-s" style="color: var(--color-semantic-warning-fill); margin: 0;">Changes to this prompt are <strong>not saved automatically</strong>. After editing, use the <strong>Copy</strong> button below and save the prompt externally (e.g. in a document or note) before leaving the page.</p>
@@ -385,16 +397,16 @@
       <div class="flex items-center justify-between mt-2">
         <span class="text-body-s text-ph-body-sec"><span id="charCount">0</span> characters</span>
         <div class="flex items-center gap-3">
-          <button id="copyPromptBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">&#128203; Copy</button>
-          <button id="resetPromptBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">Reset to default</button>
+          <button id="copyPromptBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-secondary-text); background: var(--color-component-button-secondary-default-bg); border: 1px solid var(--color-component-button-secondary-stroke); cursor: pointer; padding: 5px 12px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='var(--color-core-primary-100)'" onmouseout="this.style.background='var(--color-component-button-secondary-default-bg)'">&nbsp;Copy prompt</button>
+          <button id="resetPromptBtn" class="text-body-s font-semibold" style="color: var(--color-core-neutral-500); background: none; border: 1px solid var(--color-semantic-default-stroke); cursor: pointer; padding: 5px 12px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='var(--color-core-neutral-100)'" onmouseout="this.style.background='none'">Reset to default</button>
         </div>
       </div>
     </div>
 
     <!-- SECTION 3: Dynamic Variables -->
     <div class="card">
-      <div class="text-subheading-m mb-1">Dynamic Variables</div>
-      <p class="text-body-s text-ph-body-sec mb-4">These are injected into the agent's prompt at runtime via <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{variable}}</code> placeholders.</p>
+      <div class="text-subheading-m mb-1">Call Details</div>
+      <p class="text-body-s text-ph-body-sec mb-4">Customer and advisor information used during the call. These values are automatically inserted into the agent's script.</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="form-label">Customer First Name <span class="var-hint">→ customer_first_name</span></label>
@@ -415,8 +427,8 @@
     <div class="card">
       <div class="collapsible-header" id="advancedToggle">
         <div>
-          <div class="text-subheading-m">Voice Configuration</div>
-          <p class="text-body-s text-ph-body-sec">Advanced voice parameters</p>
+          <div class="text-subheading-m">Voice & Language</div>
+          <p class="text-body-s text-ph-body-sec">Language, voice, speaking style and speed settings</p>
         </div>
         <svg class="chevron" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
@@ -435,15 +447,15 @@
 
         <!-- First Message -->
         <div>
-          <label class="form-label">First Message Override <span class="var-hint">→ agent_intro</span></label>
-          <p class="form-sublabel">Sent as <code>{{agent_intro}}</code> dynamic variable. ElevenLabs agent's First Message must be set to <code>{{agent_intro}}</code>.</p>
+          <label class="form-label">First Message <span class="var-hint">→ agent_intro</span></label>
+          <p class="form-sublabel">The opening line the AI agent says when the customer picks up the phone.</p>
           <input type="text" id="elFirstMessage" class="form-input" value="Hallo?" />
         </div>
 
         <!-- Voice -->
         <div>
           <label class="form-label">Voice <span class="var-hint">→ voice_id</span></label>
-          <p class="form-sublabel">Select a voice for the AI agent. Leave on "Agent default" to use the configured voice.</p>
+          <p class="form-sublabel">Select which voice the AI agent uses. "Agent default" keeps the current setting.</p>
           <select id="elVoiceId" class="form-input">
             <option value="">Agent default</option>
             <option value="IWm8DnJ4NGjFI7QAM5lM">Stephan</option>
@@ -465,7 +477,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label class="form-label">Stability <span class="var-hint">→ stability</span></label>
-            <p class="form-sublabel">How consistent the voice sounds. Lower = more expressive, higher = more monotone.</p>
+            <p class="form-sublabel">Lower = more expressive, higher = more consistent.</p>
             <div class="flex items-center gap-3">
               <input type="range" id="elStability" class="range-slider flex-1" min="0.35" max="0.65" step="0.05" value="0.5" />
               <span id="elStabilityVal" class="text-body-s font-mono w-8 text-right">0.5</span>
@@ -473,7 +485,7 @@
           </div>
           <div>
             <label class="form-label">Similarity <span class="var-hint">→ similarity_boost</span></label>
-            <p class="form-sublabel">How closely the output matches the original voice. Higher = more faithful to the voice profile.</p>
+            <p class="form-sublabel">Higher = more faithful to the original voice.</p>
             <div class="flex items-center gap-3">
               <input type="range" id="elSimilarity" class="range-slider flex-1" min="0.60" max="0.90" step="0.05" value="0.75" />
               <span id="elSimilarityVal" class="text-body-s font-mono w-8 text-right">0.75</span>
@@ -481,7 +493,7 @@
           </div>
           <div>
             <label class="form-label">Speed <span class="var-hint">→ speed</span></label>
-            <p class="form-sublabel">Speaking rate multiplier. 1.0 = natural pace, lower = slower, higher = faster.</p>
+            <p class="form-sublabel">1.0 = natural pace. Lower = slower, higher = faster.</p>
             <div class="flex items-center gap-3">
               <input type="range" id="elSpeed" class="range-slider flex-1" min="0.85" max="1.15" step="0.05" value="1.0" />
               <span id="elSpeedVal" class="text-body-s font-mono w-8 text-right">1.0</span>
@@ -508,7 +520,7 @@
       <div id="smsPanel" class="mt-4 space-y-3">
         <div>
           <label class="form-label">SMS Template <span class="var-hint">→ sms_preview</span></label>
-          <p class="form-sublabel">Supports <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{customer_first_name}}</code>, <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{brand_name}}</code>, <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{ai_agent_name}}</code>. Variables are resolved server-side before sending.</p>
+          <p class="form-sublabel">The text message sent before the call. You can use placeholders like <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{customer_first_name}}</code> and <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{brand_name}}</code> — they'll be replaced automatically.</p>
           <textarea id="smsPreview" class="form-textarea" style="min-height: 80px; font-size: 14px; font-family: 'Inter', sans-serif;"></textarea>
           <div class="flex items-center justify-between mt-2">
             <span class="text-body-s text-ph-body-sec"><span id="smsCharCount">0</span> characters</span>
@@ -520,10 +532,11 @@
 
     <!-- SECTION 5: Phone + Trigger -->
     <div class="card">
-      <div class="text-subheading-m mb-4">Trigger AI Callback</div>
+      <div class="text-subheading-m mb-4">Start AI Call</div>
       <div class="flex flex-col sm:flex-row gap-4 items-end">
         <div class="flex-1 w-full">
           <label class="form-label">Phone Number <span class="var-hint">→ phone_number</span></label>
+          <p class="form-sublabel">International format without spaces, e.g. 491701234567</p>
           <div class="flex">
             <span class="inline-flex items-center px-3 border border-r-0 rounded-l-lg text-body-s font-semibold" style="background: var(--color-core-neutral-100); border-color: var(--color-semantic-default-stroke); color: var(--color-semantic-heading-text);">+</span>
             <input type="tel" id="phoneNumber" class="form-input rounded-l-none" value="491701234567" style="border-top-left-radius: 0; border-bottom-left-radius: 0;" />
@@ -531,7 +544,7 @@
         </div>
         <button id="triggerBtn" class="btn-primary w-full sm:w-auto whitespace-nowrap">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          Trigger AI Callback
+          Start AI Call
         </button>
       </div>
       <div class="mt-4 flex items-center justify-between">
@@ -539,7 +552,7 @@
           <span id="statusDot" style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;"></span>
           <span id="statusText">Ready</span>
         </div>
-        <button id="showPayloadBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">Show payload</button>
+        <button id="showPayloadBtn" class="dev-only text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">Show payload</button>
       </div>
       <pre id="payloadPreview" class="mt-3 p-4 rounded-lg text-xs font-mono overflow-x-auto" style="background: #1e293b; color: #e2e8f0; display: none; max-height: 400px; overflow-y: auto;"></pre>
     </div>
@@ -560,7 +573,7 @@
 
   <!-- FOOTER -->
   <footer class="text-center py-6 text-body-s text-ph-body-sec">
-    Built by <span style="color: var(--color-component-button-primary-default-bg); font-weight: 600;">PriceHubble</span> Solution Factory &middot; Wüstenrot AI Agent Sandbox v1.0
+    Built by <span style="color: var(--color-component-button-primary-default-bg); font-weight: 600;">PriceHubble</span> Solution Factory &middot; Wüstenrot AI Agent Sandbox v1.1
   </footer>
 
   <!-- Full agent prompts stored as plain text (not executed as JS) -->
@@ -1260,7 +1273,13 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v19';
+    const STORAGE_KEY = 'ww-agent-sandbox-v20';
+
+    function toggleDevMode() {
+      document.body.classList.toggle('dev-mode');
+      localStorage.setItem('ww-dev-mode', document.body.classList.contains('dev-mode') ? '1' : '0');
+    }
+    if (localStorage.getItem('ww-dev-mode') === '1') document.body.classList.add('dev-mode');
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
