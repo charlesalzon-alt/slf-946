@@ -467,7 +467,7 @@
             <label class="form-label">Stability <span class="var-hint">→ stability</span></label>
             <p class="form-sublabel">How consistent the voice sounds. Lower = more expressive, higher = more monotone.</p>
             <div class="flex items-center gap-3">
-              <input type="range" id="elStability" class="range-slider flex-1" min="0" max="1" step="0.05" value="0.5" />
+              <input type="range" id="elStability" class="range-slider flex-1" min="0.35" max="0.65" step="0.05" value="0.5" />
               <span id="elStabilityVal" class="text-body-s font-mono w-8 text-right">0.5</span>
             </div>
           </div>
@@ -475,7 +475,7 @@
             <label class="form-label">Similarity <span class="var-hint">→ similarity_boost</span></label>
             <p class="form-sublabel">How closely the output matches the original voice. Higher = more faithful to the voice profile.</p>
             <div class="flex items-center gap-3">
-              <input type="range" id="elSimilarity" class="range-slider flex-1" min="0" max="1" step="0.05" value="0.75" />
+              <input type="range" id="elSimilarity" class="range-slider flex-1" min="0.60" max="0.90" step="0.05" value="0.75" />
               <span id="elSimilarityVal" class="text-body-s font-mono w-8 text-right">0.75</span>
             </div>
           </div>
@@ -483,7 +483,7 @@
             <label class="form-label">Speed <span class="var-hint">→ speed</span></label>
             <p class="form-sublabel">Speaking rate multiplier. 1.0 = natural pace, lower = slower, higher = faster.</p>
             <div class="flex items-center gap-3">
-              <input type="range" id="elSpeed" class="range-slider flex-1" min="0.5" max="2.0" step="0.05" value="1.0" />
+              <input type="range" id="elSpeed" class="range-slider flex-1" min="0.85" max="1.15" step="0.05" value="1.0" />
               <span id="elSpeedVal" class="text-body-s font-mono w-8 text-right">1.0</span>
             </div>
           </div>
@@ -661,6 +661,8 @@ erfahrenen {{brand_name}} Berater.
 
 **HARD RULE — One question per turn:** Never stack questions.
 
+**HARD RULE — Always end your turn with a question:** Every response must end with a question to keep the conversation moving forward and give the customer a clear cue to respond. The only exception is the final goodbye after an appointment is confirmed or the customer declines.
+
 **HARD RULE — Goal focus:** The call has one goal — schedule an appointment. Every turn should move toward that goal. Do not get drawn into extended product discussions.
 
 **Tone:** Warm, professional, efficient. The customer did not initiate this call — respect their time. Be direct but never pushy. If they're hesitant, explain the value briefly and once.
@@ -775,6 +777,7 @@ Do NOT become a FAQ bot. The call goal is the appointment, not education.
   "customerName": "{{customer_first_name}}",
   "languageUsed": "{{language_spoken}}",
   "topic": "finanzierung | bausparen | modernisierung | foerderung | other | unknown",
+  "appointmentReason": "rate_increase | general_appointment | mortgage | mortgage_savings | campaign | other | unknown",
   "timeline": "discovered timeline or null",
   "appointmentPreferredTime": "collected preferred time",
   "preferredContactMethod": "phone | email",
@@ -976,6 +979,8 @@ Kein Problem. Soll {{advisor_name}} Sie zu einem besseren Zeitpunkt zurückrufen
 **HARD RULE — Brevity:** Never send more than 3 sentences without asking a question or pausing for the customer to react.
 
 **HARD RULE — One question per message:** Never ask two or more questions in the same message. Ask one, wait for the full response, then proceed.
+
+**HARD RULE — Always end your turn with a question:** Every response must end with a question to keep the conversation moving forward and give the customer a clear cue to respond. The only exception is the final goodbye after an appointment is confirmed or the customer declines.
 
 **HARD RULE — Max educational answers before pivot:** After providing 1–3 substantive answers, naturally transition toward connecting the customer with an advisor. Do not become a permanent FAQ bot.
 
@@ -1255,7 +1260,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v18';
+    const STORAGE_KEY = 'ww-agent-sandbox-v19';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
