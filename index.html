@@ -435,8 +435,8 @@
 
         <!-- First Message -->
         <div>
-          <label class="form-label">First Message Override <span class="var-hint">→ first_message</span></label>
-          <p class="form-sublabel">Leave blank to use the agent's default first message.</p>
+          <label class="form-label">First Message Override <span class="var-hint">→ agent_intro</span></label>
+          <p class="form-sublabel">Sent as <code>{{agent_intro}}</code> dynamic variable. ElevenLabs agent's First Message must be set to <code>{{agent_intro}}</code>.</p>
           <input type="text" id="elFirstMessage" class="form-input" value="Hallo?" />
         </div>
 
@@ -1255,7 +1255,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v17';
+    const STORAGE_KEY = 'ww-agent-sandbox-v18';
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
