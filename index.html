@@ -163,6 +163,24 @@
     }
     .form-input:focus { border-color: var(--color-component-button-primary-default-bg); }
     .form-input::placeholder { color: var(--color-component-form-placeholder-text); }
+    .form-input:disabled {
+      background: var(--color-core-neutral-100);
+      color: var(--color-core-neutral-400, #9ca3af);
+      cursor: not-allowed;
+      border-color: var(--color-core-neutral-200, #e5e7eb);
+    }
+    .field-blocked-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-core-neutral-500);
+      background: var(--color-core-neutral-100);
+    }
 
     .form-textarea {
       width: 100%;
@@ -1273,7 +1291,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v20';
+    const STORAGE_KEY = 'ww-agent-sandbox-v21';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1307,9 +1325,27 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       speed: 1.0,
     };
 
+    const AGENT_FIELDS = {
+      leads_dsw: {
+        customerFirstName: { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
+        advisorName:       { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
+        brandName:         { enabled: true },
+        smsEnabled:        { enabled: true },
+      },
+      finanzierung_uc2uc3: {
+        customerFirstName: { enabled: true },
+        advisorName:       { enabled: true },
+        brandName:         { enabled: true },
+        smsEnabled:        { enabled: true },
+      },
+    };
+    const FIELD_DEFAULTS = { enabled: true };
+
     const SMS_TEMPLATES = {
       de: 'Hallo {{customer_first_name}}, hier ist {{brand_name}}. In wenigen Sekunden erhalten Sie einen kurzen Anruf von unserer digitalen Assistentin {{ai_agent_name}}. Bitte nehmen Sie den Anruf an — es dauert nur einen Moment. Vielen Dank!',
       en: 'Hi {{customer_first_name}}, this is {{brand_name}}. In a few seconds you will receive a short call from our digital assistant {{ai_agent_name}}. Please answer the call — it will only take a moment. Thank you!',
+      de_no_name: 'Hallo, hier ist {{brand_name}}. In wenigen Sekunden erhalten Sie einen kurzen Anruf von unserer digitalen Assistentin {{ai_agent_name}}. Bitte nehmen Sie den Anruf an — es dauert nur einen Moment. Vielen Dank!',
+      en_no_name: 'Hi, this is {{brand_name}}. In a few seconds you will receive a short call from our digital assistant {{ai_agent_name}}. Please answer the call — it will only take a moment. Thank you!',
     };
 
     /* ───────────────────────────────────────────────────────────────
@@ -1374,9 +1410,51 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       els.logContainer.scrollTop = els.logContainer.scrollHeight;
     }
 
+    function getSmsTemplate(lang) {
+      const fc = AGENT_FIELDS[selectedAgent] || {};
+      const hasName = !fc.customerFirstName || fc.customerFirstName.enabled;
+      const key = hasName ? (lang || 'de') : (lang || 'de') + '_no_name';
+      return SMS_TEMPLATES[key] || SMS_TEMPLATES[lang || 'de'] || SMS_TEMPLATES.de;
+    }
+
     function setStatus(state, text) {
       els.statusBadge.className = 'status-badge status-' + state;
       els.statusText.textContent = text;
+    }
+
+    function applyFieldRestrictions() {
+      const config = AGENT_FIELDS[selectedAgent] || {};
+      const fields = { customerFirstName: els.customerFirstName, advisorName: els.advisorName, brandName: els.brandName };
+
+      for (const [key, inputEl] of Object.entries(fields)) {
+        const rule = config[key] || FIELD_DEFAULTS;
+        const wrapper = inputEl.closest('div');
+        const existingHint = wrapper.querySelector('.field-blocked-hint');
+        if (existingHint) existingHint.remove();
+
+        if (!rule.enabled) {
+          inputEl.disabled = true;
+          inputEl.value = '';
+          inputEl.placeholder = 'N/A for this use case';
+          const hint = document.createElement('div');
+          hint.className = 'field-blocked-hint';
+          hint.textContent = rule.reason || 'Not available for this use case';
+          wrapper.appendChild(hint);
+        } else {
+          inputEl.disabled = false;
+          inputEl.placeholder = '';
+          const d = loadRaw();
+          if (key === 'customerFirstName') inputEl.value = d.customerFirstName || DEFAULTS.customerFirstName;
+          if (key === 'advisorName') inputEl.value = d.advisorName || DEFAULTS.advisorName;
+          if (key === 'brandName') inputEl.value = d.brandName || DEFAULTS.brandName;
+        }
+      }
+      els.smsPreview.value = getSmsTemplate(els.elLanguage.value);
+      updateSmsCharCount();
+    }
+
+    function updateSmsCharCount() {
+      els.smsCharCount.textContent = els.smsPreview.value.length.toLocaleString();
     }
 
     /* ───────────────────────────────────────────────────────────────
@@ -1426,7 +1504,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       els.elSpeed.value = d.speed ?? DEFAULTS.speed;
 
       els.smsEnabled.checked = d.smsEnabled !== false;
-      els.smsPreview.value = d.smsPreview || SMS_TEMPLATES[d.language || DEFAULTS.language] || SMS_TEMPLATES.de;
+      els.smsPreview.value = d.smsPreview || getSmsTemplate(d.language || DEFAULTS.language);
       updateSmsPanel();
       updateSmsCharCount();
 
@@ -1454,6 +1532,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       selectedAgent = pill.dataset.agent;
       syncAgentPills();
       loadAgentPrompt();
+      applyFieldRestrictions();
       saveConfig();
       log('Switched to agent: ' + selectedAgent);
     });
@@ -1523,17 +1602,14 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     }
 
     function syncSmsToLanguage() {
-      const lang = els.elLanguage.value;
-      if (SMS_TEMPLATES[lang]) {
-        els.smsPreview.value = SMS_TEMPLATES[lang];
-        updateSmsCharCount();
-      }
+      els.smsPreview.value = getSmsTemplate(els.elLanguage.value);
+      updateSmsCharCount();
     }
 
     els.smsEnabled.addEventListener('change', () => { updateSmsPanel(); saveConfig(); });
     els.smsPreview.addEventListener('input', updateSmsCharCount);
     els.resetSmsBtn.addEventListener('click', () => {
-      els.smsPreview.value = SMS_TEMPLATES[els.elLanguage.value] || SMS_TEMPLATES.de;
+      els.smsPreview.value = getSmsTemplate(els.elLanguage.value);
       updateSmsCharCount();
       saveConfig();
       log('SMS template reset to default');
@@ -1588,13 +1664,14 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       const phone = v(els.phoneNumber).replace(/\s/g, '');
       const fullPhone = phone.startsWith('+') ? phone : '+' + phone;
 
+      const fc = AGENT_FIELDS[selectedAgent] || {};
       const payload = {
         agent_id: AGENT_ID,
         agent_phone_number_id: PHONE_ID,
         phone_number: fullPhone,
         agent_instructions: els.agentInstructions.value,
-        customer_first_name: v(els.customerFirstName),
-        advisor_name: v(els.advisorName, DEFAULTS.advisorName),
+        customer_first_name: (fc.customerFirstName && !fc.customerFirstName.enabled) ? '' : v(els.customerFirstName),
+        advisor_name: (fc.advisorName && !fc.advisorName.enabled) ? '' : v(els.advisorName, DEFAULTS.advisorName),
         brand_name: v(els.brandName, DEFAULTS.brandName),
         ai_agent_name: v(els.aiAgentName, DEFAULTS.aiAgentName),
         language: v(els.elLanguage, DEFAULTS.language),
@@ -1724,6 +1801,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     ─────────────────────────────────────────────────────────────── */
     loadConfig();
     updateVoiceIdHint();
+    applyFieldRestrictions();
     log('Loaded agent: ' + selectedAgent);
   </script>
 </body>
