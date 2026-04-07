@@ -141,8 +141,9 @@
       display: none;
     }
     body.dev-mode .var-hint { display: inline; }
-    .dev-only { display: none; }
-    body.dev-mode .dev-only { display: inline-flex; }
+    .dev-only { display: none !important; }
+    body.dev-mode .dev-only { display: inline-flex !important; }
+    body.dev-mode div.dev-only { display: block !important; }
     body.dev-mode #devModeToggle {
       background: var(--color-core-primary-50) !important;
       color: var(--color-component-button-primary-default-bg) !important;
@@ -523,7 +524,7 @@
               <label class="form-label">Address <span class="var-hint">→ dossier.property.location.address</span></label>
               <input type="text" id="dosAddress" class="form-input" value="Musterstraße 12, 71063 Sindelfingen" placeholder="Property address" />
             </div>
-            <div class="dev-only" style="display: none;">
+            <div class="dev-only">
               <label class="form-label">Valuation (€) <span class="var-hint">→ dossier.valuationSale.value — NEVER shown to customer</span></label>
               <input type="number" id="dosValuation" class="form-input" value="385000" placeholder="Internal only" />
             </div>
@@ -2278,7 +2279,10 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
 
     els.crHasLoans.addEventListener('change', () => {
       els.loanFields.style.display = els.crHasLoans.checked ? 'grid' : 'none';
+      saveConfig();
     });
+
+    els.crHasRenovations.addEventListener('change', () => { saveConfig(); });
 
     els.agentInstructions.addEventListener('input', updateCharCount);
     els.elLanguage.addEventListener('change', () => {
