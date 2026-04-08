@@ -574,7 +574,7 @@
               </div>
               <div>
                 <label class="form-label" style="font-size: 13px;">Bank</label>
-                <input type="text" id="crLoanBank" class="form-input" value="Wüstenrot Bausparkasse" placeholder="e.g. Sparkasse" />
+                <input type="text" id="crLoanBank" class="form-input" value="Wüstenrot Bausparkasse" placeholder="e.g. Wüstenrot Bausparkasse" />
               </div>
               <div>
                 <label class="form-label" style="font-size: 13px;">Original Amount (€)</label>
@@ -809,7 +809,7 @@
 
 You are {{ai_agent_name}}, a **digital assistant** calling on behalf of {{brand_name}}. Your sole purpose is to **schedule an advisory appointment** between the customer and a {{brand_name}} advisor. You are NOT a financial advisor and NOT a salesperson.
 
-You work exclusively under the {{brand_name}} identity. Never mention PriceHubble, any technology provider, or any parent company.
+You work exclusively under the {{brand_name}} identity (default: Wüstenrot). Never mention PriceHubble, MoneyPark, ElevenLabs, any technology provider, any competitor, or any parent company beyond "W&W".
 
 ## First Message (Outbound Call)
 
@@ -1030,9 +1030,9 @@ If they ask to stop being contacted: acknowledge immediately, note in `send_resu
 - Provide personalized financial, legal, or tax advice
 - Name specific rates, conditions, or monthly payments
 - Recommend specific products or tariffs
-- Discuss competitors
+- Discuss competitors or name any competing brand (Interhyp, Dr. Klein, MoneyPark, Commerzbank, ING, Sparkasse, Volksbank, etc.) — if a competitor comes up, refer generically to "ein anderer Anbieter"
 - Collect sensitive data (IBAN, Steuernummer, account numbers)
-- Mention PriceHubble or any technology infrastructure
+- Mention PriceHubble, MoneyPark, ElevenLabs, or any technology provider, competitor, or parent company beyond "W&W"
 - Continue if the customer clearly wants to end the call
 - Call outside reasonable hours (handled by the scheduling system, not the agent)
 - Reveal the tip source/partner name unless explicitly provided in the variables
@@ -1105,7 +1105,7 @@ Most variables are injected from the portal data and signal engine. Some may be 
 
 You are {{ai_agent_name}}, a **digital assistant** on the {{brand_name}} Eigentümerportal. You help homeowners understand their financing situation and prepare for their next step — you are NOT a financial advisor, NOT a salesperson, and NOT a replacement for a {{brand_name}} Berater (ADP).
 
-You work exclusively under the {{brand_name}} identity. Never mention PriceHubble, any technology provider, or any parent company beyond "W&W Gruppe" when relevant to product context.
+You work exclusively under the {{brand_name}} identity (default: Wüstenrot). Never mention PriceHubble, MoneyPark, ElevenLabs, any technology provider, any competitor, or any parent company beyond "W&W Gruppe" when relevant to product context.
 
 ## Detecting Entry Channel
 
@@ -1420,10 +1420,10 @@ If they ask for data deletion or to stop being contacted: acknowledge immediatel
 - Perform calculations or simulate Rechner functionality
 - Recommend specific tariffs, products, or strategies
 - Make binding statements ("das ist die beste Lösung")
-- Compare with competitors by name
+- Compare with competitors by name or mention any competing brand (Interhyp, Dr. Klein, MoneyPark, Commerzbank, ING, Sparkasse, Volksbank, etc.) — if a competitor comes up, refer generically to "ein anderer Anbieter"
 - Guarantee outcomes or create urgency/fear
 - Collect sensitive data (IBAN, Steuernummer, account numbers)
-- Mention PriceHubble or any technology provider
+- Mention PriceHubble, MoneyPark, ElevenLabs, or any technology provider, competitor, or parent company beyond "W&W"
 - Continue if the customer clearly wants to end the conversation
 - Stack multiple questions in a single message
 - Repeat the same advisor handoff offer in consecutive messages
@@ -1562,7 +1562,7 @@ Use KNOWN data to personalise the conversation:
 
 You are {{ai_agent_name}}, a **digital assistant** calling on behalf of {{brand_name}}. Your purpose is to **help the customer keep their profile up to date** so they receive the most relevant services, alerts, and offers from {{brand_name}}. You are NOT a financial advisor and NOT a salesperson.
 
-You work exclusively under the {{brand_name}} identity. Never mention PriceHubble, ElevenLabs, any technology provider, or any parent company.
+You work exclusively under the {{brand_name}} identity (default: Wüstenrot). Never mention PriceHubble, MoneyPark, ElevenLabs, any technology provider, any competitor, or any parent company beyond "W&W".
 
 ## First Message (Outbound Call)
 
@@ -1810,7 +1810,7 @@ Ich wünsche Ihnen noch einen schönen [Tag/Abend]. Auf Wiederhören!
     "originalPurchasePrice": "320000",
     "originalPurchaseDate": "2015",
     "hasFinancing": true,
-    "financingProvider": "Hausbank (extern)",
+    "financingProvider": "Wüstenrot Bausparkasse",
     "rateExpiryYear": "2028",
     "renovationPlans": "Heizungstausch geplant 2027",
     "preferredContact": "email",
@@ -1868,7 +1868,8 @@ If they ask to stop being contacted: acknowledge immediately, note in `send_resu
 - Recommend specific products or tariffs
 - Pressure the customer to share data they're uncomfortable with
 - Collect sensitive data (IBAN, Steuernummer, account numbers, passwords)
-- Mention PriceHubble, ElevenLabs, or any technology provider
+- Mention PriceHubble, MoneyPark, ElevenLabs, or any technology provider, competitor, or parent company beyond "W&W"
+- Name any competing brand (Interhyp, Dr. Klein, Commerzbank, ING, Sparkasse, Volksbank, etc.) — if a competitor comes up, refer generically to "ein anderer Anbieter"
 - Continue if the customer clearly wants to end the call
 - Stack multiple questions in a single message
 - Turn the call into a sales pitch — this is about data enrichment, not selling
@@ -1909,7 +1910,7 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v23';
+    const STORAGE_KEY = 'ww-agent-sandbox-v24';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -2440,18 +2441,19 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
         let body = null;
         try { body = await resp.json(); } catch (_) {}
         return { status: resp.status, body, ok: resp.ok, mode: 'cors' };
-      } catch (corsErr) {
+      } catch (_corsErr) {
+        // CORS preflight failed — use no-cors to guarantee delivery.
+        // The request IS sent; we just can't read the response.
         try {
-          const resp = await fetch(url, {
+          await fetch(url, {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body: jsonBody,
           });
-          let body = null;
-          try { body = await resp.json(); } catch (_) {}
-          return { status: resp.status, body, ok: resp.ok, mode: 'text-plain' };
-        } catch (corsErr2) {
-          return { status: 0, body: null, ok: true, mode: 'opaque' };
+          return { status: 0, body: null, ok: true, mode: 'no-cors' };
+        } catch (netErr) {
+          return { status: 0, body: null, ok: false, mode: 'failed', error: netErr.message };
         }
       }
     }
@@ -2479,15 +2481,18 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
 
       try {
         const result = await fireWebhook(webhookUrl, payload);
-        if (result.ok || result.mode === 'opaque') {
+        if (result.ok) {
           setStatus('success', 'Triggered!');
-          log('Webhook fired successfully (mode: ' + result.mode + ', status: ' + result.status + ')', 'ok');
+          log('Webhook fired (mode: ' + result.mode + ', status: ' + result.status + ')', 'ok');
+          if (result.mode === 'no-cors') {
+            log('⚠ no-cors mode: payload sent with Content-Type text/plain — verify ActivePieces received it.', 'warn');
+          }
           if (result.body) {
             log('Response: ' + JSON.stringify(result.body).substring(0, 200), 'ok');
           }
         } else {
-          setStatus('error', 'Error ' + result.status);
-          log('Webhook returned status ' + result.status, 'err');
+          setStatus('error', result.mode === 'failed' ? 'Network error' : 'Error ' + result.status);
+          log('Webhook failed (mode: ' + result.mode + ', status: ' + result.status + ')' + (result.error ? ' — ' + result.error : ''), 'err');
           if (result.body) log('Error body: ' + JSON.stringify(result.body).substring(0, 300), 'err');
         }
       } catch (err) {
