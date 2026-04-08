@@ -410,13 +410,14 @@
       <p class="text-body-s text-ph-body-sec mb-3">The main script that guides the AI agent's behaviour during the call. The knowledge base is always included separately — <a href="https://docs.google.com/document/d/1q61x1fewydF7lbTcAYaPJa-FwNWER0qAtS5WO8tTQac/edit?usp=sharing" target="_blank" rel="noopener" style="color: var(--color-component-button-link-text); font-weight: 600; text-decoration: underline;">view knowledge base</a>.</p>
       <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border-radius: 8px; background: var(--color-semantic-warning-bg); border: 1px solid #f0d78e; margin-bottom: 12px;">
         <span style="font-size: 16px; line-height: 20px; flex-shrink: 0;">⚠</span>
-        <p class="text-body-s" style="color: var(--color-semantic-warning-fill); margin: 0;">Changes to this prompt are <strong>not saved automatically</strong>. After editing, use the <strong>Copy</strong> button below and save the prompt externally (e.g. in a document or note) before leaving the page.</p>
+        <p class="text-body-s" style="color: var(--color-semantic-warning-fill); margin: 0;">Changes to this prompt are <strong>not saved automatically</strong>. After editing, use the <strong>Save prompt</strong> button below to download it as a file, or <strong>Copy</strong> to clipboard.</p>
       </div>
       <textarea id="agentInstructions" class="form-textarea"></textarea>
       <div class="flex items-center justify-between mt-2">
         <span class="text-body-s text-ph-body-sec"><span id="charCount">0</span> characters</span>
         <div class="flex items-center gap-3">
           <button id="copyPromptBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-secondary-text); background: var(--color-component-button-secondary-default-bg); border: 1px solid var(--color-component-button-secondary-stroke); cursor: pointer; padding: 5px 12px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='var(--color-core-primary-100)'" onmouseout="this.style.background='var(--color-component-button-secondary-default-bg)'">&nbsp;Copy prompt</button>
+          <button id="savePromptBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-secondary-text); background: var(--color-component-button-secondary-default-bg); border: 1px solid var(--color-component-button-secondary-stroke); cursor: pointer; padding: 5px 12px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='var(--color-core-primary-100)'" onmouseout="this.style.background='var(--color-component-button-secondary-default-bg)'">&#128190; Save prompt</button>
           <button id="resetPromptBtn" class="text-body-s font-semibold" style="color: var(--color-core-neutral-500); background: none; border: 1px solid var(--color-semantic-default-stroke); cursor: pointer; padding: 5px 12px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='var(--color-core-neutral-100)'" onmouseout="this.style.background='none'">Reset to default</button>
         </div>
       </div>
@@ -1986,6 +1987,7 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
       agentInstructions: $('agentInstructions'),
       charCount: $('charCount'),
       copyPromptBtn: $('copyPromptBtn'),
+      savePromptBtn: $('savePromptBtn'),
       resetPromptBtn: $('resetPromptBtn'),
       customerFirstName: $('customerFirstName'),
       advisorName: $('advisorName'),
@@ -2307,6 +2309,25 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
         setTimeout(() => { els.copyPromptBtn.innerHTML = '&#128203; Copy'; }, 2000);
         log('Prompt copied to clipboard (fallback)');
       });
+    });
+
+    els.savePromptBtn.addEventListener('click', () => {
+      const text = els.agentInstructions.value;
+      const agentLabel = selectedAgent.replace(/_/g, '-');
+      const date = new Date().toISOString().slice(0, 10);
+      const filename = `prompt-${agentLabel}-${date}.txt`;
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      els.savePromptBtn.textContent = '✓ Saved!';
+      setTimeout(() => { els.savePromptBtn.innerHTML = '&#128190; Save prompt'; }, 2000);
+      log('Prompt downloaded as ' + filename);
     });
 
     els.resetPromptBtn.addEventListener('click', () => {
