@@ -603,17 +603,6 @@
             <p class="form-sublabel">If off → renovations empty → agent asks about modernisation</p>
           </div>
 
-          <!-- Contact fields -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-            <div>
-              <label class="form-label">Lead Phone <span class="var-hint">→ lead.phone</span></label>
-              <input type="text" id="crLeadPhone" class="form-input" value="" placeholder="e.g. +491701234567 (empty = missing)" />
-            </div>
-            <div>
-              <label class="form-label">Lead Email <span class="var-hint">→ lead.email</span></label>
-              <input type="email" id="crLeadEmail" class="form-input" value="" placeholder="e.g. karl@example.de (empty = missing)" />
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -1528,8 +1517,6 @@ Extract these fields. Mark each as KNOWN (has a value) or MISSING (null/absent):
 | `property.originalPurchaseDate` | Date of purchase |
 | `loans` (array) | If empty → ask about financing. If populated → financing is known, skip. |
 | `renovations.reasons` | If null/empty → ask about modernisation plans |
-| `lead.phone` | If null/empty → confirm or collect phone |
-| `lead.email` | If null/empty → confirm or collect email |
 | `lifeCycleCalendar` (array) | If empty → ask about upcoming life events |
 | `wwContracts` (array) | If empty → ask about existing {{brand_name}} products |
 | `dossier.completeness` | Current completeness score — use to prioritise |
@@ -1541,8 +1528,7 @@ Only ask about MISSING fields. Skip anything already KNOWN. Prioritise:
 1. Property basics missing from dossier (highest impact on completeness)
 2. Financing / loans missing from custom records
 3. Energy & modernisation missing from both
-4. Contact preferences missing from custom records
-5. Life events / goals (lowest priority — only ask if call is going well and customer has time)
+4. Life events / goals (lowest priority — only ask if call is going well and customer has time)
 
 ## Step 4: Contextualise with known data
 
@@ -1692,17 +1678,7 @@ Explain the value: "Das hilft uns, die Wertentwicklung Ihrer Immobilie für Sie 
 
 Explain: "Das ist wichtig, weil es gerade viele Fördermöglichkeiten gibt, zum Beispiel für den Heizungstausch."
 
-## Priority 5 — Contact Preferences (from custom records)
-
-**Skip** if `lead.phone` AND `lead.email` are both present.
-
-| Custom records field | Ask if null | Example question |
-|---|---|---|
-| `lead.email` | Yes | "Unter welcher E-Mail-Adresse können wir Sie am besten erreichen?" |
-| `lead.phone` | Yes | "Und welche Telefonnummer ist die beste für Sie?" |
-| Preferred contact method | Always ask last | "Wie erreichen wir Sie am liebsten — per Telefon, E-Mail, oder über das Portal?" |
-
-## Priority 6 — Life Events & Goals (lowest priority)
+## Priority 5 — Life Events & Goals (lowest priority)
 
 **Only ask if** the call is going well, the customer seems engaged, AND `lifeCycleCalendar` is empty in custom records.
 
@@ -1743,7 +1719,7 @@ When data IS present in the payloads, use it to personalise the conversation but
 ```
 Opening (value prop) → AI Disclosure → Parse payloads silently →
   Missing Property Basics → Missing Financing → Missing Purchase Info →
-  Missing Energy/Modernisation → Missing Contact → Life Events (if time) →
+  Missing Energy/Modernisation → Life Events (if time) →
   Summary → Closing
 ```
 
@@ -1813,15 +1789,11 @@ Ich wünsche Ihnen noch einen schönen [Tag/Abend]. Auf Wiederhören!
     "financingProvider": "Wüstenrot Bausparkasse",
     "rateExpiryYear": "2028",
     "renovationPlans": "Heizungstausch geplant 2027",
-    "preferredContact": "email",
-    "bestTime": "mornings",
     "lifeEvents": "Solaranlage 2027, neue Küche 2028"
   },
   "fieldsAlreadyKnown": ["propertyType", "buildingYear", "livingArea"],
   "crossSellSignals": "financing expiry 2028 — potential refinancing lead",
   "advisorConsultationAccepted": true | false,
-  "preferredContactMethod": "phone | email | portal",
-  "preferredContactTime": "mornings | afternoons | evenings",
   "notes": "free-text: anything the advisor should know, customer concerns, special circumstances"
 }
 ```
@@ -1910,7 +1882,7 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v24';
+    const STORAGE_KEY = 'ww-agent-sandbox-v25';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -2039,8 +2011,6 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
       crLoanRate: $('crLoanRate'),
       crLoanPayment: $('crLoanPayment'),
       crHasRenovations: $('crHasRenovations'),
-      crLeadPhone: $('crLeadPhone'),
-      crLeadEmail: $('crLeadEmail'),
     };
 
     /* ───────────────────────────────────────────────────────────────
@@ -2399,10 +2369,6 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
           },
           loans: loans,
           renovations: { reasons: els.crHasRenovations.checked ? 'planned' : null },
-          lead: {
-            phone: strOrNull(els.crLeadPhone),
-            email: strOrNull(els.crLeadEmail),
-          },
           lifeCycleCalendar: [],
           wwContracts: [],
           dossier: { completeness: numOrNull(els.crCompleteness) },
