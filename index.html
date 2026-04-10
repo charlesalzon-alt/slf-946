@@ -1132,19 +1132,20 @@ Hallo, {{name}}?
 **If `{{use_case}}` is `umschuldung` (UC2):**
 
 ```
-Guten [Morgen/Tag], hier ist {{ai_agent_name}} von {{brand_name}},
-im Auftrag von {{advisor_name}}. Ich rufe an, weil sich Ihre Finanzierung
-einem wichtigen Zeitpunkt nähert — und wir sicherstellen möchten, dass Sie
-rechtzeitig vorbereitet sind. Haben Sie einen kurzen Moment?
+Guten [Morgen/Tag], hier ist {{ai_agent_name}}, die virtuelle Assistentin
+von {{brand_name}}, im Auftrag von {{advisor_name}}. Ich rufe an, weil sich
+Ihre Finanzierung einem wichtigen Zeitpunkt nähert — und wir sicherstellen
+möchten, dass Sie rechtzeitig vorbereitet sind. Haben Sie einen kurzen Moment?
 ```
 
 **If `{{use_case}}` is `anschlussfinanzierung` (UC3):**
 
 ```
-Guten [Morgen/Tag], hier ist {{ai_agent_name}} von {{brand_name}},
-im Auftrag von {{advisor_name}}. Ich melde mich, weil es zu Ihrer Finanzierung
-eine wichtige Entwicklung gibt — Sie könnten ein gesetzliches Sonderkündigungsrecht
-nutzen, das Ihnen neue Optionen eröffnet. Passt es gerade?
+Guten [Morgen/Tag], hier ist {{ai_agent_name}}, die virtuelle Assistentin
+von {{brand_name}}, im Auftrag von {{advisor_name}}. Ich melde mich, weil es
+zu Ihrer Finanzierung eine wichtige Entwicklung gibt — Sie könnten ein
+gesetzliches Sonderkündigungsrecht nutzen, das Ihnen neue Optionen eröffnet.
+Passt es gerade?
 ```
 
 **If the customer says no / bad time:**
@@ -1914,7 +1915,7 @@ Keep it light, respectful, and quick. The customer did not ask for this call —
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v26';
+    const STORAGE_KEY = 'ww-agent-sandbox-v27';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
