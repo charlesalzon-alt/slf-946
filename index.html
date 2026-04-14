@@ -441,6 +441,11 @@
           <label class="form-label">Brand Name <span class="var-hint">→ brand_name</span></label>
           <input type="text" id="brandName" class="form-input" value="Wüstenrot" />
         </div>
+        <div>
+          <label class="form-label">Lead ID <span class="var-hint">→ lead_id</span></label>
+          <p class="form-sublabel">Optional. If set, the call recap is logged on this existing lead instead of creating a new one.</p>
+          <input type="text" id="leadId" class="form-input" placeholder="(empty = new lead)" value="" />
+        </div>
       </div>
     </div>
 
@@ -644,10 +649,10 @@
           <select id="elVoiceId" class="form-input">
             <option value="">Agent default</option>
             <option value="zKHQdbB8oaQ7roNTiDTK" selected>Laura</option>
-            <option value="IWm8DnJ4NGjFI7QAM5lM">Stephan</option>
-            <option value="Cqbq4nsuUe1we6J45miU">Helmut</option>
             <option value="DEZHhPbmb8LVZmWufkCh">Anna</option>
             <option value="MGG5Irb57ATHvyIeTEYo">Maya</option>
+            <option value="IWm8DnJ4NGjFI7QAM5lM">Stephan</option>
+            <option value="Cqbq4nsuUe1we6J45miU">Helmut</option>
           </select>
           <div id="voiceIdHint" class="mt-1" style="font-size: 13px; color: #9ca3af; font-family: 'JetBrains Mono', monospace;"></div>
         </div>
@@ -739,6 +744,10 @@
           <span id="statusText">Ready</span>
         </div>
         <button id="showPayloadBtn" class="dev-only text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">Show payload</button>
+      </div>
+      <div class="mt-3" style="display: flex; align-items: flex-start; gap: 8px; padding: 10px 14px; border-radius: 8px; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.25); font-size: 13px; line-height: 1.5; color: #ca8a04;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>The meeting recap and contact request will appear in the Lead Activation dashboard approximately <strong>8 minutes</strong> after the beginning of the call.</span>
       </div>
       <pre id="payloadPreview" class="mt-3 p-4 rounded-lg text-xs font-mono overflow-x-auto" style="background: #1e293b; color: #e2e8f0; display: none; max-height: 400px; overflow-y: auto;"></pre>
     </div>
@@ -1060,13 +1069,9 @@ Respect and efficiency. The customer did not ask for this call — earn their at
 # Umschuldung & Anschlussfinanzierung — Existing Homeowners (UC2 + UC3)
 
 
-> **How to use**: System prompt for the {{brand_name}} AI assistant (voice and chat). Handles **existing homeowners** whose financing is approaching a critical milestone — either nearing the end of the fixed-rate period (UC2: Umschuldung) or reaching the §489 BGB 10-year termination right (UC3: Anschlussfinanzierung).
+> **How to use**: System prompt for the {{brand_name}} AI voice agent. Handles **existing homeowners** whose financing is approaching a critical milestone — either nearing the end of the fixed-rate period (UC2: Umschuldung) or reaching the §489 BGB 10-year renegotiation right (UC3: Anschlussfinanzierung).
 >
-> **Entry scenarios** (agent must work equally well for both):
-> 1. **Inbound chat** — Customer clicks a signal-triggered teaser on the Eigentümerportal (e.g., "Nur noch 125 Tage bis zur Umschuldung — Mit Laura sprechen")
-> 2. **Outbound voice** — System-triggered call to the customer based on a detected financing signal
->
-> **Key design principles**: Inform and orient, never advise · Customer value proposition first · One question at a time · AI disclosure in first exchange · Max 1–3 educational answers before pivoting to advisor · Never name rates, calculate, or recommend products · Handoff to ADP (advisor) with full context · Default language: German (Hochdeutsch) · This prompt is in English — agent translates all phrases to the visitor's language at runtime
+> **Key design principles**: Inform and orient, never advise · Customer value proposition first · One question at a time · AI disclosure in first exchange · Max 1–3 educational answers before pivoting to advisor · Never name rates, calculate, or recommend products · Handoff to ADP (advisor) with full context · Default language: German (Hochdeutsch) · This prompt is in English — agent translates all phrases to German at runtime
 
 
 ---
@@ -1099,42 +1104,21 @@ You are {{ai_agent_name}}, a **digital assistant** on the {{brand_name}} Eigent�
 
 You work exclusively under the {{brand_name}} identity (default: Wüstenrot). Never mention PriceHubble, MoneyPark, ElevenLabs, any technology provider, any competitor, or any parent company beyond "W&W Gruppe" when relevant to product context.
 
-## Detecting Entry Channel
-
-- If the **customer writes/speaks first** (clicked portal teaser) → treat as **INBOUND**
-- If **you speak first** (system-triggered voice call) → treat as **OUTBOUND**
-
-Adapt your opening and pacing based on the detected channel.
-
-## INBOUND Opening (Portal Chat)
-
-The customer clicked a teaser about their financing. They have context. Be direct and helpful.
-
-### Second Message — Use-Case-Dependent
-
-**If `{{use_case}}` is `umschuldung` (UC2):**
-
-"Hallo{{customer_first_name → ', ' + customer_first_name if available}}! Ich bin {{ai_agent_name}}, die digitale Assistentin auf Ihrem {{brand_name}} Eigentümerportal — kein Mensch, aber ich helfe Ihnen gerne weiter. Ihre Finanzierung nähert sich einem wichtigen Zeitpunkt{{months_to_expiry → ' — in etwa ' + months_to_expiry + ' Monaten läuft Ihre Zinsbindung aus' if available}}. Das ist kein Grund zur Sorge, aber ein guter Anlass, sich rechtzeitig vorzubereiten. Darf ich Ihnen kurz erklären, warum das für Sie wichtig ist?"
-
-**If `{{use_case}}` is `anschlussfinanzierung` (UC3):**
-
-"Hallo{{customer_first_name → ', ' + customer_first_name if available}}! Ich bin {{ai_agent_name}}, die digitale Assistentin auf Ihrem {{brand_name}} Eigentümerportal — kein Mensch, aber ich bin gerne für Sie da. Zu Ihrer Finanzierung gibt es eine interessante Neuigkeit: Nach §489 BGB haben Sie die Möglichkeit, Ihre Konditionen überprüfen zu lassen — und {{brand_name}} könnte Ihnen möglicherweise bessere Bedingungen anbieten. Möchten Sie mehr darüber erfahren?"
-
-## OUTBOUND Opening (Voice Call)
-
-### First Message
+## First Message
 
 ```
 Hallo, {{customer_first_name}}?
 ```
 
-### Second Message — After Customer Confirms
+Wait for the customer to confirm. Then deliver your second message.
+
+## Second Message — Use-Case-Dependent
 
 **If `{{use_case}}` is `umschuldung` (UC2):**
 
 ```
 Guten [Morgen/Tag], hier ist {{ai_agent_name}}, die virtuelle Assistentin
-von {{brand_name}}, im Auftrag von {{advisor_name}}. Ich rufe an, weil sich
+von {{brand_name}}, im Auftrag von {{advisor_name}}. Ich melde mich, weil sich
 Ihre Finanzierung einem wichtigen Zeitpunkt nähert — und wir sicherstellen
 möchten, dass Sie rechtzeitig vorbereitet sind. Haben Sie einen kurzen Moment?
 ```
@@ -1358,7 +1342,6 @@ When the conversation reaches a natural end:
 {
   "leadId": "{{leadId}}",
   "callOutcome": "ADVISOR_HANDOFF | INFORMATION_ONLY | CALLBACK_REQUESTED | NOT_INTERESTED | ABANDONED",
-  "entryChannel": "INBOUND | OUTBOUND",
   "useCase": "umschuldung | anschlussfinanzierung",
   "customerName": "{{customer_first_name}}",
   "languageUsed": "{{language_spoken}}",
@@ -1399,7 +1382,6 @@ If they ask for data deletion or to stop being contacted: acknowledge immediatel
 # GUARDRAILS — Absolute Rules
 
 ## You MUST always:
-- Detect the entry channel (inbound vs outbound) and adapt your opening
 - Disclose you are a virtual assistant in your first substantive message
 - Explain **why** a topic matters for the customer before diving into details (Nutzenargumentation)
 - Ask one question per message, max 3 sentences before pausing
@@ -1667,7 +1649,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v32';
+    const STORAGE_KEY = 'ww-agent-sandbox-v35';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1768,6 +1750,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       customerFirstName: $('customerFirstName'),
       advisorName: $('advisorName'),
       brandName: $('brandName'),
+      leadId: $('leadId'),
       aiAgentName: $('aiAgentName'),
       advancedToggle: $('advancedToggle'),
       advancedPanel: $('advancedPanel'),
@@ -2014,10 +1997,10 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
 
     const VOICE_NAMES = {
       'zKHQdbB8oaQ7roNTiDTK': 'Laura',
-      'IWm8DnJ4NGjFI7QAM5lM': 'Stephan',
-      'Cqbq4nsuUe1we6J45miU': 'Helmut',
       'DEZHhPbmb8LVZmWufkCh': 'Anna',
       'MGG5Irb57ATHvyIeTEYo': 'Maya',
+      'IWm8DnJ4NGjFI7QAM5lM': 'Stephan',
+      'Cqbq4nsuUe1we6J45miU': 'Helmut',
     };
 
     function updateVoiceIdHint() {
@@ -2158,6 +2141,9 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
         ai_agent_name: v(els.aiAgentName, DEFAULTS.aiAgentName),
         language: v(els.elLanguage, DEFAULTS.language),
       };
+
+      const lid = v(els.leadId);
+      if (lid) payload.lead_id = lid;
 
       const fm = v(els.elFirstMessage);
       if (fm) payload.first_message = fm;
