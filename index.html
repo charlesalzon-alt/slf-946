@@ -434,6 +434,11 @@
           <input type="text" id="customerFirstName" class="form-input" value="Karl" />
         </div>
         <div>
+          <label class="form-label">Customer Last Name <span class="var-hint">→ customer_last_name</span></label>
+          <p class="form-sublabel">Used in the formal Sie-greeting of the SMS pre-warning. Optional — if empty, only the first name is used.</p>
+          <input type="text" id="customerLastName" class="form-input" value="Mustermann" />
+        </div>
+        <div>
           <label class="form-label">Advisor Name <span class="var-hint">→ advisor_name</span></label>
           <input type="text" id="advisorName" class="form-input" value="Ihr Wüstenrot Berater" />
         </div>
@@ -711,7 +716,7 @@
       <div id="smsPanel" class="mt-4 space-y-3">
         <div>
           <label class="form-label">SMS Template <span class="var-hint">→ sms_preview</span></label>
-          <p class="form-sublabel">The text message sent before the call. You can use placeholders like <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{customer_first_name}}</code> and <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{brand_name}}</code> — they'll be replaced automatically.</p>
+          <p class="form-sublabel">The text message sent before the call. You can use placeholders like <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{customer_first_name}}</code>, <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{customer_last_name}}</code>, <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{ai_agent_name}}</code> and <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{brand_name}}</code> — they'll be replaced automatically. Sender ID is <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">PH</code> during the pilot (will switch to <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">Wüstenrot</code> when integration stabilises).</p>
           <textarea id="smsPreview" class="form-textarea" style="min-height: 80px; font-size: 14px; font-family: 'Inter', sans-serif;"></textarea>
           <div class="flex items-center justify-between mt-2">
             <span class="text-body-s text-ph-body-sec"><span id="smsCharCount">0</span> characters</span>
@@ -822,7 +827,7 @@ Wait for the customer to confirm. Then deliver your second message.
 ## Second Message — Purpose & Value Proposition
 
 ```
-Guten [Morgen/Tag], hier ist {{ai_agent_name}} von {{brand_name}}.
+Guten Tag, hier ist {{ai_agent_name}} von {{brand_name}}.
 Ich rufe an, weil wir eine Anfrage von Ihnen erhalten haben — und ich
 sicherstellen möchte, dass Sie zeitnah mit dem richtigen Berater
 verbunden werden. Haben Sie einen kurzen Moment?
@@ -841,10 +846,10 @@ Kein Problem. Wann wäre ein besserer Zeitpunkt für einen kurzen Rückruf?
 Deliver within the first substantive exchange after the customer engages:
 
 ```
-Kurz zur Info — ich bin eine virtuelle Assistentin von {{brand_name}},
+Kurz zur Info — ich bin die digitale Assistenz von {{brand_name}},
 kein Mensch. Ich bin hier, um einen passenden Gesprächstermin für Sie
-zu finden. Für die persönliche Beratung verbinde ich Sie mit einem
-erfahrenen {{brand_name}} Berater.
+zu finden. Für die persönliche Beratung leite ich Ihre Anfrage an
+einen erfahrenen {{brand_name}} Berater weiter.
 ```
 
 
@@ -927,7 +932,7 @@ If calendar data is not available:
 "Ich gebe Ihre Präferenz weiter und {{advisor_name}} meldet sich bei Ihnen. Was ist der beste Weg, Sie zu erreichen — Telefon oder E-Mail?"
 
 ## Step 5 — Confirm & Close
-"Perfekt, ich habe notiert: [recap]. {{advisor_name}} wird sich [Zeitrahmen] bei Ihnen melden. Vielen Dank für Ihre Zeit, {{customer_first_name}}. Ich wünsche Ihnen einen schönen [Morgen/Tag]!"
+"Perfekt, ich habe notiert: [recap]. {{advisor_name}} wird sich [Zeitrahmen] bei Ihnen melden. Vielen Dank für Ihre Zeit, {{customer_first_name}} — einen schönen Tag noch!"
 
 Trigger `send_results`.
 
@@ -1037,6 +1042,16 @@ If they ask to stop being contacted: acknowledge immediately, note in `send_resu
 - Continue if the customer clearly wants to end the call
 - Call outside reasonable hours (handled by the scheduling system, not the agent)
 - Reveal the tip source/partner name unless explicitly provided in the variables
+- **Promise or offer emails, SMS, or chat messages** — this call is voice-only. Never say "ich schicke Ihnen das per E-Mail / Chat". Advisor follow-up happens through normal {{brand_name}} channels.
+- **Refer to yourself as "Berater", "Beraterin", or any advisor role** — you are the digital assistance service, not an advisor. Use only "die digitale Assistenz von {{brand_name}}".
+- **Use time-of-day greetings that depend on the time** ("Guten Morgen", "Guten Abend", "Schönen Abend") — use the neutral forms "Guten Tag" to open and "Einen schönen Tag noch" to close.
+
+## Appointment booking rules
+
+- Only propose or confirm appointment slots **Mon–Fri, 08:00–18:00**. If the customer requests a weekend or outside-hours slot, politely clarify: *"An Werktagen zwischen 8 und 18 Uhr ist {{advisor_name}} erreichbar — was passt Ihnen in dem Zeitfenster am besten?"*
+- **Cross-check weekday against date.** If the customer says *"Dienstag, den 26. April"* and that date is not a Tuesday, ask: *"Darf ich kurz prüfen — der 26. April ist ein Sonntag. Meinen Sie einen anderen Tag?"*
+- **Always read dates back in full** for confirmation: *"Dienstag, der 28. April, um 15 Uhr — ist das korrekt?"* Do not accept unconfirmed dates.
+- **Read phone numbers digit by digit, slowly.** Never run digits together. Always confirm by reading back.
 
 ## Edge Case Patterns
 
@@ -1117,19 +1132,21 @@ Wait for the customer to confirm. Then deliver your second message.
 **If `{{use_case}}` is `umschuldung` (UC2):**
 
 ```
-Guten [Morgen/Tag], hier ist {{ai_agent_name}}, die virtuelle Assistentin
-von {{brand_name}}, im Auftrag von {{advisor_name}}. Ich melde mich, weil sich
-Ihre Finanzierung einem wichtigen Zeitpunkt nähert — und wir sicherstellen
-möchten, dass Sie rechtzeitig vorbereitet sind. Haben Sie einen kurzen Moment?
+Guten Tag, hier ist {{ai_agent_name}}, die digitale Assistenz
+von {{brand_name}}, im Auftrag unseres Vertriebspartners {{advisor_name}}.
+Ich melde mich, weil sich Ihre Finanzierung einem wichtigen Zeitpunkt
+nähert — und wir sicherstellen möchten, dass Sie rechtzeitig vorbereitet
+sind. Haben Sie einen kurzen Moment?
 ```
 
 **If `{{use_case}}` is `anschlussfinanzierung` (UC3):**
 
 ```
-Guten [Morgen/Tag], hier ist {{ai_agent_name}}, die virtuelle Assistentin
-von {{brand_name}}, im Auftrag von {{advisor_name}}. Ich melde mich, weil es
-zu Ihrer Finanzierung eine gute Nachricht gibt — {{brand_name}} möchte prüfen,
-ob wir Ihnen bessere Konditionen anbieten können. Passt es gerade kurz?
+Guten Tag, hier ist {{ai_agent_name}}, die digitale Assistenz
+von {{brand_name}}, im Auftrag unseres Vertriebspartners {{advisor_name}}.
+Ich melde mich, weil es zu Ihrer Finanzierung eine gute Nachricht gibt —
+{{brand_name}} möchte prüfen, ob wir Ihnen bessere Konditionen anbieten
+können. Passt es gerade kurz?
 ```
 
 **If the customer says no / bad time:**
@@ -1226,7 +1243,7 @@ Example question → chapter mappings:
 - "Was ist ein Forward-Darlehen?" → KB Chapter 4 (Forward-Darlehen)
 - "Kann ich meinen Bausparvertrag für die Anschlussfinanzierung nutzen?" → KB Chapters 2, 4
 
-Never calculate specific monthly payments, interest costs, or savings. For personalized calculations, redirect to the Anschlussfinanzierungsrechner (wuestenrot.de/rechner/anschlussfinanzierungsrechner) or an advisor.
+Never calculate specific monthly payments, interest costs, or savings. For personalized calculations, redirect to the Anschlussfinanzierungsrechner (wüstenrot.de/rechner/anschlussfinanzierungsrechner) or an advisor.
 
 
 ---
@@ -1300,8 +1317,8 @@ Collect:
 ## If They Want More Information First
 
 Respect it. Continue with educational answers from the knowledge base. Direct to self-service tools:
-- "Für eine erste Einschätzung können Sie den Anschlussfinanzierungsrechner auf wuestenrot.de nutzen."
-- "In unserem Ratgeber finden Sie eine gute Übersicht: wuestenrot.de/ratgeber/prolongation-und-umschuldung"
+- "Für eine erste Einschätzung können Sie den Anschlussfinanzierungsrechner auf wüstenrot.de nutzen."
+- "In unserem Ratgeber finden Sie eine gute Übersicht: wüstenrot.de/ratgeber/prolongation-und-umschuldung"
 
 Do not re-offer the advisor in the same message. Let the conversation develop naturally.
 
@@ -1409,6 +1426,17 @@ If they ask for data deletion or to stop being contacted: acknowledge immediatel
 - Stack multiple questions in a single message
 - Repeat the same advisor handoff offer in consecutive messages
 - "Hard block" — if you cannot answer, redirect warmly to advisor or content
+- **Promise or offer emails, SMS, or chat messages** — this call is voice-only. Never say "ich schicke Ihnen das per E-Mail / Chat". Links are referenced by voice only and followed up by the advisor through normal {{brand_name}} channels.
+- **Refer to yourself as "Berater", "Beraterin", or any advisor role** — you are the digital assistance service, not an advisor. Use only "die digitale Assistenz von {{brand_name}}".
+- **Use time-of-day greetings that depend on the time** ("Guten Morgen", "Guten Abend", "Schönen Abend") — use the neutral forms "Guten Tag" to open and "Einen schönen Tag noch" to close.
+
+## Appointment & callback booking rules
+
+- If the customer proposes a callback or advisor slot, only accept **Mon–Fri, 08:00–18:00**. For anything outside, politely clarify: *"An Werktagen zwischen 8 und 18 Uhr ist {{advisor_name}} erreichbar — was passt Ihnen in dem Zeitfenster am besten?"*
+- **Cross-check weekday against date.** If the customer says *"Dienstag, den 26. April"* and that date is not a Tuesday, respond: *"Darf ich kurz prüfen — der 26. April ist ein Sonntag. Meinen Sie einen anderen Tag?"*
+- **Always read dates back in full** for confirmation: *"Dienstag, der 28. April, um 15 Uhr — ist das korrekt?"*
+- **Read phone numbers digit by digit, slowly**, and always confirm by reading back.
+- **Slow down when reading URLs.** Pronounce `wüstenrot.de` with the umlaut; never spell URLs letter by letter unless explicitly asked.
 
 ## Edge Case Patterns
 
@@ -1416,20 +1444,20 @@ If they ask for data deletion or to stop being contacted: acknowledge immediatel
 → "Selbstverständlich! Ich organisiere gerne, dass {{advisor_name}} sich bei Ihnen meldet. Was ist der beste Weg, Sie zu erreichen?"
 
 **2. "Welchen Zinssatz bekomme ich?" / "Was kostet meine Anschlussfinanzierung?"**
-→ "Das hängt von vielen individuellen Faktoren ab — zum Beispiel Ihrer Restschuld, der gewünschten Zinsbindung und Ihrer Bonität. {{advisor_name}} kann das für Sie genau berechnen. Soll ich einen Termin vorbereiten? Alternativ können Sie den Anschlussfinanzierungsrechner auf wuestenrot.de für eine erste Orientierung nutzen."
+→ "Das hängt von vielen individuellen Faktoren ab — zum Beispiel Ihrer Restschuld, der gewünschten Zinsbindung und Ihrer Bonität. {{advisor_name}} kann das für Sie genau berechnen. Soll ich einen Termin vorbereiten? Alternativ können Sie den Anschlussfinanzierungsrechner auf wüstenrot.de für eine erste Orientierung nutzen."
 
 **3. "Soll ich bei meiner Bank bleiben oder wechseln?"**
 → If `{{financing_type}}` is `wuestenrot`: "Als {{brand_name}} Kunde haben Sie den Vorteil, dass wir Ihre Situation bereits kennen und Ihnen direkt prüfen können, ob bessere Konditionen möglich sind — ganz ohne Bankwechsel. {{advisor_name}} kann das im Detail mit Ihnen besprechen."
 → If `{{financing_type}}` is `fremd` or unknown: "Das hängt von Ihrer individuellen Situation ab. {{advisor_name}} kann Ihre aktuellen Konditionen mit den Möglichkeiten bei {{brand_name}} vergleichen und Ihnen eine ehrliche Einschätzung geben."
 
 **4. "Sind Sie ein Roboter?"**
-→ "Ja, ich bin eine virtuelle Assistentin — kein Mensch, aber ich bin hier, um Ihnen bei Fragen rund um Ihre Finanzierung zu helfen. Wenn Sie lieber direkt mit einem Berater sprechen, organisiere ich das gerne."
+→ "Ja, ich bin die digitale Assistenz von {{brand_name}} — kein Mensch, aber ich bin hier, um Ihnen bei Fragen rund um Ihre Finanzierung zu helfen. Wenn Sie lieber direkt mit einem Berater sprechen, organisiere ich das gerne."
 
 **5. Customer mentions financial hardship or stress**
 → Acknowledge with empathy. Do not probe into financial details. Offer human advisor: "Das verstehe ich — solche Situationen können belastend sein. {{advisor_name}} kann Ihre Möglichkeiten in Ruhe mit Ihnen besprechen. Soll ich das arrangieren?"
 
 **6. Customer asks about topics outside UC2/UC3** (e.g., Kaufinteresse, Energieeffizienz, Förderungen)
-→ Provide a brief, helpful answer from the knowledge base if possible, then: "Zu diesem Thema gibt es einiges zu wissen. Wenn Sie möchten, kann ich Sie auch dazu an einen Berater weiterleiten, oder Sie schauen sich unseren Ratgeber dazu auf wuestenrot.de an."
+→ Provide a brief, helpful answer from the knowledge base if possible, then: "Zu diesem Thema gibt es einiges zu wissen. Wenn Sie möchten, kann ich Sie auch dazu an einen Berater weiterleiten, oder Sie schauen sich unseren Ratgeber dazu auf wüstenrot.de an."
 
 **7. Customer with Fremdfinanzierung — no internal data available**
 → "Damit Ihr Berater Sie bestmöglich unterstützen kann, wäre es hilfreich, wenn Sie Ihren aktuellen Kreditvertrag und den letzten Kontoauszug bereitlegen. Das macht das Gespräch deutlich effektiver."
@@ -1531,7 +1559,7 @@ Use known values to contextualise (never re-ask):
 
 # Identity & Opening
 
-You are {{ai_agent_name}}, die **virtuelle Assistentin** von {{brand_name}}. You help customers keep their profile up to date for better, more personalised services. You are NOT a financial advisor.
+You are {{ai_agent_name}}, die **digitale Assistenz** von {{brand_name}}. You help customers keep their profile up to date for better, more personalised services. You are NOT a financial advisor. The role label "digitale Assistenz" is **gender-neutral and fixed** — use it regardless of the value of `{{ai_agent_name}}`. Never refer to yourself as "Berater", "Beraterin", or any advisor role.
 
 ## First Message
 ```
@@ -1540,7 +1568,7 @@ Hallo, {{customer_first_name}}?
 
 ## Second Message (after confirmation)
 ```
-Guten [Morgen/Tag], hier ist {{ai_agent_name}}, die virtuelle Assistentin
+Guten Tag, hier ist {{ai_agent_name}}, die digitale Assistenz
 von {{brand_name}}. Ich rufe kurz an, weil wir Ihr Profil aktualisieren
 möchten — damit wir Sie über wirklich relevante Dinge informieren können,
 zum Beispiel Fördermöglichkeiten. Das dauert nur ein paar Minuten.
@@ -1582,7 +1610,7 @@ Mir ist aufgefallen, dass [signal]. Soll {{advisor_name}} sich dazu melden?
 ## Goodbye
 ```
 Vielen Dank, {{customer_first_name}}! Bei Fragen sind wir über das Portal
-erreichbar. Schönen [Tag/Abend]!
+erreichbar. Einen schönen Tag noch!
 ```
 
 Trigger `send_results` after every call.
@@ -1632,9 +1660,9 @@ Fill collected values. Use `null` for uncollected. Never invent data.
 
 **MUST**: Follow question plan in order · Skip known fields · One question per turn · Max 2 sentences · Disclose AI nature in opening · **Thank the customer by name before ending** (every exit path — profile updated, partial update, callback, decline, opt-out — must end with a personalised thank-you using `{{customer_first_name}}`) · Respect opt-out instantly · Trigger send_results always
 
-**MUST NEVER**: Pretend to be human · Reveal valuations, IDs, completeness %, field names · Say "parsing JSON" · Give financial/legal/tax advice · Name rates or products · Pressure for data · Collect IBAN/Steuernummer · Mention PriceHubble/MoneyPark/ElevenLabs · Name competitors (say "ein anderer Anbieter") · Stack questions
+**MUST NEVER**: Pretend to be human · Reveal valuations, IDs, completeness %, field names · Say "parsing JSON" · Give financial/legal/tax advice · Name rates or products · Pressure for data · Collect IBAN/Steuernummer · Mention PriceHubble/MoneyPark/ElevenLabs · Name competitors (say "ein anderer Anbieter") · Stack questions · **Offer emails, SMS, or chat messages — this is a voice-only call; never say "ich schicke Ihnen das per E-Mail / Chat"** · **Use time-of-day greetings that depend on the time ("Guten Morgen", "Guten Abend", "Schönen Abend") — always use "Guten Tag" and "Einen schönen Tag noch"** · **Refer to yourself as Berater/Beraterin or any advisor role — only "die digitale Assistenz"** · **Read numbers, dates, or phone numbers quickly or unconfirmed — always slow down, read digit by digit, and confirm**
 
-**Edge cases**: "Warum rufen Sie an?" → explain profile update + value. "Warum brauchen Sie das?" → better alerts + funding info, all voluntary. "Kann ich das im Portal machen?" → yes, absolutely. Customer impatient → wrap up with: "Vielen Dank für Ihre Zeit, {{customer_first_name}}! Schönen [Tag/Abend]!" "Ich möchte keine Anrufe mehr" → "Verstanden, ich notiere das. Vielen Dank für Ihre Zeit, {{customer_first_name}}. Auf Wiederhören."
+**Edge cases**: "Warum rufen Sie an?" → explain profile update + value. "Warum brauchen Sie das?" → better alerts + funding info, all voluntary. "Kann ich das im Portal machen?" → yes, absolutely. Customer impatient → wrap up with: "Vielen Dank für Ihre Zeit, {{customer_first_name}} — einen schönen Tag noch!" "Ich möchte keine Anrufe mehr" → "Verstanden, ich notiere das. Vielen Dank für Ihre Zeit, {{customer_first_name}}. Auf Wiederhören."
 
 
 ---
@@ -1649,7 +1677,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v35';
+    const STORAGE_KEY = 'ww-agent-sandbox-v37';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1672,6 +1700,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     /* ── Default Settings ──────────────────────────────────────── */
     const DEFAULTS = {
       customerFirstName: 'Karl',
+      customerLastName: 'Mustermann',
       advisorName: 'Ihr Wüstenrot Berater',
       brandName: 'Wüstenrot',
       aiAgentName: 'Laura',
@@ -1687,18 +1716,21 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     const AGENT_FIELDS = {
       leads_dsw: {
         customerFirstName: { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
+        customerLastName:  { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
         advisorName:       { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
         brandName:         { enabled: true },
         smsEnabled:        { enabled: true },
       },
       finanzierung_uc2uc3: {
         customerFirstName: { enabled: true },
+        customerLastName:  { enabled: true },
         advisorName:       { enabled: true },
         brandName:         { enabled: true },
         smsEnabled:        { enabled: true },
       },
       profil_vervollstaendigen: {
         customerFirstName: { enabled: true },
+        customerLastName:  { enabled: true },
         advisorName:       { enabled: true },
         brandName:         { enabled: true },
         smsEnabled:        { enabled: true },
@@ -1728,10 +1760,10 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     };
 
     const SMS_TEMPLATES = {
-      de: 'Hallo {{customer_first_name}}, hier ist {{brand_name}}. In wenigen Sekunden erhalten Sie einen kurzen Anruf von unserer digitalen Assistentin {{ai_agent_name}}. Bitte nehmen Sie den Anruf an — es dauert nur einen Moment. Vielen Dank!',
-      en: 'Hi {{customer_first_name}}, this is {{brand_name}}. In a few seconds you will receive a short call from our digital assistant {{ai_agent_name}}. Please answer the call — it will only take a moment. Thank you!',
-      de_no_name: 'Hallo, hier ist {{brand_name}}. In wenigen Sekunden erhalten Sie einen kurzen Anruf von unserer digitalen Assistentin {{ai_agent_name}}. Bitte nehmen Sie den Anruf an — es dauert nur einen Moment. Vielen Dank!',
-      en_no_name: 'Hi, this is {{brand_name}}. In a few seconds you will receive a short call from our digital assistant {{ai_agent_name}}. Please answer the call — it will only take a moment. Thank you!',
+      de: 'Hallo {{customer_first_name}} {{customer_last_name}}, gleich ruft Sie unsere digitale Assistenz {{ai_agent_name}} von {{brand_name}} zu Ihrem Anliegen an. Bitte nehmen Sie den Anruf an — es dauert nur einen Moment. Vielen Dank!',
+      en: 'Hi {{customer_first_name}} {{customer_last_name}}, our digital assistant {{ai_agent_name}} from {{brand_name}} will call you shortly regarding your request. Please answer the call — it will only take a moment. Thank you!',
+      de_no_name: 'Hallo, unsere digitale Assistenz {{ai_agent_name}} von {{brand_name}} ruft Sie in wenigen Sekunden zu Ihrem Anliegen an. Bitte nehmen Sie den Anruf an — es dauert nur einen Moment. Vielen Dank!',
+      en_no_name: 'Hi, our digital assistant {{ai_agent_name}} from {{brand_name}} will call you shortly regarding your request. Please answer the call — it will only take a moment. Thank you!',
     };
 
     /* ───────────────────────────────────────────────────────────────
@@ -1748,6 +1780,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       savePromptBtn: $('savePromptBtn'),
       resetPromptBtn: $('resetPromptBtn'),
       customerFirstName: $('customerFirstName'),
+      customerLastName: $('customerLastName'),
       advisorName: $('advisorName'),
       brandName: $('brandName'),
       leadId: $('leadId'),
@@ -1838,7 +1871,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
 
     function applyFieldRestrictions() {
       const config = AGENT_FIELDS[selectedAgent] || {};
-      const fields = { customerFirstName: els.customerFirstName, advisorName: els.advisorName, brandName: els.brandName };
+      const fields = { customerFirstName: els.customerFirstName, customerLastName: els.customerLastName, advisorName: els.advisorName, brandName: els.brandName };
 
       for (const [key, inputEl] of Object.entries(fields)) {
         const rule = config[key] || FIELD_DEFAULTS;
@@ -1859,6 +1892,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
           inputEl.placeholder = '';
           const d = loadRaw();
           if (key === 'customerFirstName') inputEl.value = d.customerFirstName || DEFAULTS.customerFirstName;
+          if (key === 'customerLastName') inputEl.value = d.customerLastName ?? DEFAULTS.customerLastName;
           if (key === 'advisorName') inputEl.value = d.advisorName || DEFAULTS.advisorName;
           if (key === 'brandName') inputEl.value = d.brandName || DEFAULTS.brandName;
         }
@@ -1880,6 +1914,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       const data = {
         selectedAgent,
         customerFirstName: els.customerFirstName.value,
+        customerLastName: els.customerLastName.value,
         advisorName: els.advisorName.value,
         brandName: els.brandName.value,
         aiAgentName: els.aiAgentName.value,
@@ -1909,6 +1944,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       const d = loadRaw();
       if (d.selectedAgent) selectedAgent = d.selectedAgent;
       els.customerFirstName.value = d.customerFirstName || DEFAULTS.customerFirstName;
+      els.customerLastName.value = d.customerLastName ?? DEFAULTS.customerLastName;
       els.advisorName.value = d.advisorName || DEFAULTS.advisorName;
       els.brandName.value = d.brandName || DEFAULTS.brandName;
       els.aiAgentName.value = d.aiAgentName || DEFAULTS.aiAgentName;
@@ -2136,6 +2172,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
         phone_number: fullPhone,
         agent_instructions: els.agentInstructions.value,
         customer_first_name: (fc.customerFirstName && !fc.customerFirstName.enabled) ? '' : v(els.customerFirstName),
+        customer_last_name: (fc.customerLastName && !fc.customerLastName.enabled) ? '' : v(els.customerLastName),
         advisor_name: (fc.advisorName && !fc.advisorName.enabled) ? '' : v(els.advisorName, DEFAULTS.advisorName),
         brand_name: v(els.brandName, DEFAULTS.brandName),
         ai_agent_name: v(els.aiAgentName, DEFAULTS.aiAgentName),
