@@ -451,6 +451,14 @@
           <p class="form-sublabel">Optional. If set, the call recap is logged on this existing lead instead of creating a new one.</p>
           <input type="text" id="leadId" class="form-input" placeholder="(empty = new lead)" value="" />
         </div>
+        <div>
+          <label class="form-label">Financing With <span class="var-hint">→ financing_with</span></label>
+          <p class="form-sublabel">Who currently holds the customer's financing. Drives the agent's pitch: <strong>Wüstenrot</strong> → skip Q1, retention wording. <strong>unknown</strong> → ask Q1, branch in-call.</p>
+          <select id="financingWith" class="form-input">
+            <option value="Wüstenrot" selected>Wüstenrot</option>
+            <option value="unknown">unknown</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -1227,7 +1235,7 @@ Most variables are injected from the portal data and signal engine. Some may be 
 | `{{customer_first_name}}` | Thomas | Customer's first name. Derived from portal SSO/MEWA or lead data. Usually available. |
 | `{{use_case}}` | umschuldung | Signal type: `umschuldung` (UC2) or `anschlussfinanzierung` (UC3). Always present. |
 | `{{months_to_expiry}}` | 4 | Months until current financing fixed-rate period ends. May be empty for UC3. |
-| `{{financing_type}}` | wuestenrot | Whether the current loan is Wüstenrot-financed (`wuestenrot`) or externally financed (`fremd`). May be empty. |
+| `{{financing_with}}` | Wüstenrot | Pre-call hint about who currently holds the customer's loan. Always populated. Values: `Wüstenrot` (W&W-financed — skip Q1, retention pitch) or `unknown` (no pre-call data — ask Q1 to discover). |
 | `{{property_address}}` | Musterstraße 12, 71063 Sindelfingen | Property address from the PriceHubble dossier. May be empty. |
 | `{{advisor_name}}` | Herr Weber | The customer's assigned Wüstenrot advisor. Fallback: "Ihr persönlicher {{brand_name}} Berater". May be empty. |
 
@@ -1241,7 +1249,8 @@ Some dynamic variables may arrive empty for portal customers without an assigned
   - "**Ihr persönlicher {{brand_name}} Berater** wird sich bei Ihnen melden" (instead of "{{advisor_name}} wird sich…")
   - "Soll ich einen Termin mit **Ihrem persönlichen {{brand_name}} Berater** vorbereiten?"
 - **`{{customer_first_name}}` empty** → drop the name from greetings and thank-yous; use neutral wording ("Vielen Dank für das Gespräch — ich wünsche Ihnen alles Gute.").
-- **`{{months_to_expiry}}`, `{{financing_type}}`, `{{property_address}}` empty** → do not invent values, do not mention the missing field. Discover what's needed via Q1–Q6 instead.
+- **`{{months_to_expiry}}`, `{{property_address}}` empty** → do not invent values, do not mention the missing field. Discover what's needed via Q1–Q6 instead.
+- **`{{financing_with}}` is `unknown`** → the variable is always populated (`Wüstenrot` or `unknown`), never empty. When `unknown`, treat it as *"we have no pre-call data on the customer's bank"* — ask Q1 to discover. Never mention the variable name, never read it aloud, never expose `unknown` as a word to the customer.
 
 
 ---
@@ -1548,12 +1557,12 @@ The most important job is to explain **why this matters to the customer** — no
 
 **Customer benefit of acting now**: The customer may be paying more than necessary. A timely review with their {{brand_name}} advisor can reveal whether better conditions are available — without the hassle of switching banks.
 
-**CRITICAL — Wüstenrot customers stay with Wüstenrot**: When `{{financing_type}}` is `wuestenrot`, NEVER frame §489 BGB as a reason to switch banks or leave {{brand_name}}. Frame it as: "{{brand_name}} can review your current conditions and potentially offer you better terms." The goal is to retain the customer and improve their deal within {{brand_name}}.
+**CRITICAL — Wüstenrot customers stay with Wüstenrot**: When `{{financing_with}}` is `Wüstenrot` (or the customer has confirmed in-call that their loan is with {{brand_name}}), NEVER frame §489 BGB as a reason to switch banks or leave {{brand_name}}. Frame it as: "{{brand_name}} can review your current conditions and potentially offer you better terms." The goal is to retain the customer and improve their deal within {{brand_name}}.
 
-**How to communicate it (when financing_type is `wuestenrot`):**
+**When `{{financing_with}}` is `Wüstenrot` (or the customer has confirmed in-call that their loan is with {{brand_name}}):**
 "Nach §489 BGB haben Sie nach 10 Jahren das Recht, Ihre Konditionen neu zu verhandeln — und das Beste daran: Als {{brand_name}} Kunde können wir Ihnen direkt prüfen, ob wir Ihnen bessere Bedingungen anbieten können. Das geht unkompliziert und ohne Bankwechsel."
 
-**How to communicate it (when financing_type is `fremd` or unknown):**
+**When `{{financing_with}}` is `unknown` and the customer has confirmed in-call that their loan is with an external bank:**
 "Nach §489 BGB haben Sie nach 10 Jahren die Möglichkeit, Ihre Finanzierung neu zu verhandeln. {{brand_name}} hat Zugang zu über 400 Partnerbanken und kann prüfen, ob es für Sie günstigere Konditionen gibt."
 
 
@@ -1598,7 +1607,7 @@ Your primary mission is to **understand the customer's situation through convers
 
 ## Discovery Rules
 
-- Start with Q1 only if `{{financing_type}}` is empty. If it's available, confirm it softly.
+- Skip Q1 if `{{financing_with}}` is `Wüstenrot` — confirm softly in passing instead (e.g., *"Sie sind ja bei {{brand_name}} finanziert — darf ich gleich auf Ihre Anschlussfinanzierung eingehen?"*). Ask Q1 when `{{financing_with}}` is `unknown` to discover whether the customer is with {{brand_name}} or an external bank.
 - If the customer volunteers multiple data points at once, extract them all — never re-ask.
 - If the customer is hesitant, reassure and move on: "Kein Problem, das können Sie auch direkt mit dem Berater besprechen."
 - After gathering 2–3 data points OR after the customer expresses interest in next steps, transition to the advisor handoff.
@@ -1635,10 +1644,10 @@ Only share this if the customer has agreed to or shown interest in the advisor c
 **General framing:**
 "Basierend auf dem, was Sie mir erzählt haben, wäre ein Gespräch mit {{advisor_name}} der nächste sinnvolle Schritt. {{advisor_name}} kann Ihre Situation individuell bewerten und Ihnen verschiedene Optionen aufzeigen — völlig unverbindlich. Soll ich das für Sie vorbereiten?"
 
-**If `{{financing_type}}` is `wuestenrot`:**
+**If `{{financing_with}}` is `Wüstenrot` (or the customer has confirmed a {{brand_name}} loan during Q1):**
 "Da Sie bereits bei {{brand_name}} finanziert sind, hat {{advisor_name}} Zugriff auf Ihre Vertragsdaten und kann Ihnen direkt passende Optionen aufzeigen."
 
-**If `{{financing_type}}` is `fremd`:**
+**If `{{financing_with}}` is `unknown` and the customer has confirmed an external bank during Q1:**
 "Auch wenn Ihre aktuelle Finanzierung bei einem anderen Anbieter ist — {{brand_name}} hat Zugang zu über 400 Partnerbanken und kann prüfen, ob es für Ihre Restschuld günstigere Konditionen gibt."
 
 ## If They Want an Advisor — Appointment Booking Micro-Script
@@ -1785,7 +1794,7 @@ If they ask for data deletion or to stop being contacted: acknowledge immediatel
 - Recommend specific tariffs, products, or strategies
 - Make binding statements ("das ist die beste Lösung")
 - Compare with competitors by name or mention any competing brand (Interhyp, Dr. Klein, MoneyPark, Commerzbank, ING, Sparkasse, Volksbank, etc.) — if a competitor comes up, refer generically to "ein anderer Anbieter"
-- Suggest switching banks or leaving {{brand_name}} when `{{financing_type}}` is `wuestenrot` — the goal is to retain the customer and offer them better terms within {{brand_name}}
+- Suggest switching banks or leaving {{brand_name}} when `{{financing_with}}` is `Wüstenrot` (or the customer has confirmed in-call a {{brand_name}} loan) — the goal is to retain the customer and offer them better terms within {{brand_name}}
 - Guarantee outcomes or create urgency/fear
 - Collect sensitive data (IBAN, Steuernummer, account numbers)
 - Mention PriceHubble, MoneyPark, ElevenLabs, or any technology provider, competitor, or parent company beyond "W&W"
@@ -1812,8 +1821,8 @@ If they ask for data deletion or to stop being contacted: acknowledge immediatel
 → "Das hängt von vielen individuellen Faktoren ab — zum Beispiel Ihrer Restschuld, der gewünschten Zinsbindung und Ihrer Bonität. {{advisor_name}} kann das für Sie genau berechnen. Soll ich einen Termin vorbereiten? Alternativ können Sie den Anschlussfinanzierungsrechner auf wüstenrot.de für eine erste Orientierung nutzen."
 
 **3. "Soll ich bei meiner Bank bleiben oder wechseln?"**
-→ If `{{financing_type}}` is `wuestenrot`: "Als {{brand_name}} Kunde haben Sie den Vorteil, dass wir Ihre Situation bereits kennen und Ihnen direkt prüfen können, ob bessere Konditionen möglich sind — ganz ohne Bankwechsel. {{advisor_name}} kann das im Detail mit Ihnen besprechen."
-→ If `{{financing_type}}` is `fremd` or unknown: "Das hängt von Ihrer individuellen Situation ab. {{advisor_name}} kann Ihre aktuellen Konditionen mit den Möglichkeiten bei {{brand_name}} vergleichen und Ihnen eine ehrliche Einschätzung geben."
+→ If `{{financing_with}}` is `Wüstenrot` (or the customer has confirmed a {{brand_name}} loan): "Als {{brand_name}} Kunde haben Sie den Vorteil, dass wir Ihre Situation bereits kennen und Ihnen direkt prüfen können, ob bessere Konditionen möglich sind — ganz ohne Bankwechsel. {{advisor_name}} kann das im Detail mit Ihnen besprechen."
+→ If `{{financing_with}}` is `unknown` and the customer has confirmed an external bank: "Das hängt von Ihrer individuellen Situation ab. {{advisor_name}} kann Ihre aktuellen Konditionen mit den Möglichkeiten bei {{brand_name}} vergleichen und Ihnen eine ehrliche Einschätzung geben."
 
 **4. "Sind Sie ein Roboter?"**
 → "Ja, ich bin eine virtuelle Assistentin — kein Mensch, aber ich bin hier, um Ihnen bei Fragen rund um Ihre Finanzierung zu helfen. Wenn Sie lieber direkt mit einem Berater sprechen, organisiere ich das gerne."
@@ -2001,7 +2010,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v50';
+    const STORAGE_KEY = 'ww-agent-sandbox-v51';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -2031,6 +2040,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       phoneNumber: '491701234567',
       language: 'de',
       firstMessage: 'Hallo {{customer_first_name}} {{customer_last_name}}?',
+      financingWith: 'Wüstenrot',
       voiceId: 'zKHQdbB8oaQ7roNTiDTK',
       stability: 0.5,
       similarity: 0.75,
@@ -2108,6 +2118,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       advisorName: $('advisorName'),
       brandName: $('brandName'),
       leadId: $('leadId'),
+      financingWith: $('financingWith'),
       aiAgentName: $('aiAgentName'),
       advancedToggle: $('advancedToggle'),
       advancedPanel: $('advancedPanel'),
@@ -2246,6 +2257,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
         phoneNumber: els.phoneNumber.value,
         language: els.elLanguage.value,
         firstMessage: els.elFirstMessage.value,
+        financingWith: els.financingWith.value,
         voiceId: els.elVoiceId.value,
         stability: parseFloat(els.elStability.value),
         similarity: parseFloat(els.elSimilarity.value),
@@ -2276,6 +2288,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       els.phoneNumber.value = d.phoneNumber || DEFAULTS.phoneNumber;
       els.elLanguage.value = d.language || DEFAULTS.language;
       els.elFirstMessage.value = d.firstMessage || getFirstMessageTemplate(d.language || DEFAULTS.language);
+      els.financingWith.value = d.financingWith || DEFAULTS.financingWith;
       els.elVoiceId.value = d.voiceId || DEFAULTS.voiceId;
       els.elStability.value = d.stability ?? DEFAULTS.stability;
       els.elSimilarity.value = d.similarity ?? DEFAULTS.similarity;
@@ -2516,6 +2529,8 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
 
       const lid = v(els.leadId);
       if (lid) payload.lead_id = lid;
+
+      payload.financing_with = v(els.financingWith, DEFAULTS.financingWith);
 
       const fm = v(els.elFirstMessage);
       if (fm) payload.first_message = fm;
