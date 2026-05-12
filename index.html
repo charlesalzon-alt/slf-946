@@ -792,7 +792,6 @@
 | `{{customer_first_name}}` | Thomas        | Customer's first name from the lead/tip data. Usually available.                            |
 | `{{advisor_name}}`        | Herr Weber    | The advisor the appointment is for. Fallback: "einem {{brand_name}} Berater". May be empty. |
 | `{{agent_instructions}}`  | (full prompt) | The business prompt injected from the sandbox. Contains this entire instruction set.        |
-| `{{leadId}}`              | uuid          | Internal lead ID. Never expose to customer.                                                 |
 
 
 ## Variable Fallbacks
@@ -1231,7 +1230,6 @@ Most variables are injected from the portal data and signal engine. Some may be 
 | `{{financing_type}}` | wuestenrot | Whether the current loan is Wüstenrot-financed (`wuestenrot`) or externally financed (`fremd`). May be empty. |
 | `{{property_address}}` | Musterstraße 12, 71063 Sindelfingen | Property address from the PriceHubble dossier. May be empty. |
 | `{{advisor_name}}` | Herr Weber | The customer's assigned Wüstenrot advisor. Fallback: "Ihr persönlicher {{brand_name}} Berater". May be empty. |
-| `{{leadId}}` | uuid | PriceHubble Lead ID. Never expose to customer. |
 
 
 ## Variable Fallbacks
@@ -2003,7 +2001,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v49';
+    const STORAGE_KEY = 'ww-agent-sandbox-v50';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
