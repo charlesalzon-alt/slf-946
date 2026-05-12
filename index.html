@@ -2010,7 +2010,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v52';
+    const STORAGE_KEY = 'ww-agent-sandbox-v53';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -2259,17 +2259,24 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
        PERSISTENCE
     ─────────────────────────────────────────────────────────────── */
     function saveConfig() {
+      const fc = AGENT_FIELDS[selectedAgent] || {};
+      const prev = loadRaw();
+      // Per-agent gated reads: when a field is disabled for the active agent,
+      // `applyFieldRestrictions` may have wiped the UI value — preserve whatever
+      // was previously persisted so it survives an agent round-trip (e.g. user
+      // switches Finanzierung → DSW → Finanzierung must still see "Mustermann").
+      const persist = (fcKey, el, def) => (fc[fcKey] && !fc[fcKey].enabled) ? (prev[fcKey] ?? def) : el.value;
       const data = {
         selectedAgent,
-        customerFirstName: els.customerFirstName.value,
-        customerLastName: els.customerLastName.value,
-        advisorName: els.advisorName.value,
-        brandName: els.brandName.value,
+        customerFirstName: persist('customerFirstName', els.customerFirstName, DEFAULTS.customerFirstName),
+        customerLastName: persist('customerLastName', els.customerLastName, DEFAULTS.customerLastName),
+        advisorName: persist('advisorName', els.advisorName, DEFAULTS.advisorName),
+        brandName: persist('brandName', els.brandName, DEFAULTS.brandName),
         aiAgentName: els.aiAgentName.value,
         phoneNumber: els.phoneNumber.value,
         language: els.elLanguage.value,
         firstMessage: els.elFirstMessage.value,
-        financingWith: els.financingWith.value,
+        financingWith: persist('financingWith', els.financingWith, DEFAULTS.financingWith),
         voiceId: els.elVoiceId.value,
         stability: parseFloat(els.elStability.value),
         similarity: parseFloat(els.elSimilarity.value),
