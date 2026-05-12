@@ -2010,7 +2010,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v51';
+    const STORAGE_KEY = 'ww-agent-sandbox-v52';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -2054,6 +2054,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
         advisorName:       { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
         brandName:         { enabled: true },
         smsEnabled:        { enabled: true },
+        financingWith:     { enabled: false, reason: 'Not used by this agent — financing status discovered in-call' },
       },
       finanzierung_uc2uc3: {
         customerFirstName: { enabled: true },
@@ -2061,6 +2062,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
         advisorName:       { enabled: true },
         brandName:         { enabled: true },
         smsEnabled:        { enabled: true },
+        financingWith:     { enabled: true },
       },
       profil_vervollstaendigen: {
         customerFirstName: { enabled: true },
@@ -2068,6 +2070,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
         advisorName:       { enabled: true },
         brandName:         { enabled: true },
         smsEnabled:        { enabled: true },
+        financingWith:     { enabled: false, reason: 'Not used by this agent' },
       },
     };
     const FIELD_DEFAULTS = { enabled: true };
@@ -2235,6 +2238,15 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       els.smsPreview.value = getSmsTemplate(els.elLanguage.value);
       updateSmsCharCount();
       els.elFirstMessage.value = getFirstMessageTemplate(els.elLanguage.value);
+
+      const fwRule = config.financingWith || FIELD_DEFAULTS;
+      const fwWrapper = els.financingWith.closest('div');
+      if (!fwRule.enabled) {
+        fwWrapper.style.display = 'none';
+      } else {
+        fwWrapper.style.display = '';
+        els.financingWith.value = loadRaw().financingWith || DEFAULTS.financingWith;
+      }
 
       els.dossierSection.style.display = selectedAgent === 'profil_vervollstaendigen' ? 'block' : 'none';
     }
@@ -2530,7 +2542,9 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       const lid = v(els.leadId);
       if (lid) payload.lead_id = lid;
 
-      payload.financing_with = v(els.financingWith, DEFAULTS.financingWith);
+      if (!fc.financingWith || fc.financingWith.enabled) {
+        payload.financing_with = v(els.financingWith, DEFAULTS.financingWith);
+      }
 
       const fm = v(els.elFirstMessage);
       if (fm) payload.first_message = fm;
