@@ -644,7 +644,7 @@
         <div>
           <label class="form-label">First Message <span class="var-hint">→ agent_intro</span></label>
           <p class="form-sublabel">The opening line the AI agent says when the customer picks up the phone.</p>
-          <input type="text" id="elFirstMessage" class="form-input" value="Hallo?" />
+          <input type="text" id="elFirstMessage" class="form-input" value="Hallo {{customer_first_name}} {{customer_last_name}}?" />
         </div>
 
         <!-- Voice -->
@@ -1258,10 +1258,12 @@ You work exclusively under the {{brand_name}} identity (default: Wüstenrot). Ne
 ## First Message
 
 ```
-Hallo, bin ich hier richtig bei {{customer_first_name}}, {{customer_last_name}}?
+Hallo {{customer_first_name}} {{customer_last_name}}?
 ```
 
-Wait for the customer to confirm. Then deliver your second message.
+This is a short verification opener (rising intonation). Wait for the customer to confirm. If either name variable is empty, the prototype sends just `Hallo?` — proceed identically.
+
+Then deliver your second message.
 
 ## Second Message — Use-Case-Dependent
 
@@ -2001,7 +2003,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v48';
+    const STORAGE_KEY = 'ww-agent-sandbox-v49';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -2030,7 +2032,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       aiAgentName: 'Laura',
       phoneNumber: '491701234567',
       language: 'de',
-      firstMessage: 'Hallo?',
+      firstMessage: 'Hallo {{customer_first_name}} {{customer_last_name}}?',
       voiceId: 'zKHQdbB8oaQ7roNTiDTK',
       stability: 0.5,
       similarity: 0.75,
@@ -2223,6 +2225,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       }
       els.smsPreview.value = getSmsTemplate(els.elLanguage.value);
       updateSmsCharCount();
+      els.elFirstMessage.value = getFirstMessageTemplate(els.elLanguage.value);
 
       els.dossierSection.style.display = selectedAgent === 'profil_vervollstaendigen' ? 'block' : 'none';
     }
@@ -2274,7 +2277,7 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       els.aiAgentName.value = d.aiAgentName || DEFAULTS.aiAgentName;
       els.phoneNumber.value = d.phoneNumber || DEFAULTS.phoneNumber;
       els.elLanguage.value = d.language || DEFAULTS.language;
-      els.elFirstMessage.value = d.firstMessage || DEFAULTS.firstMessage;
+      els.elFirstMessage.value = d.firstMessage || getFirstMessageTemplate(d.language || DEFAULTS.language);
       els.elVoiceId.value = d.voiceId || DEFAULTS.voiceId;
       els.elStability.value = d.stability ?? DEFAULTS.stability;
       els.elSimilarity.value = d.similarity ?? DEFAULTS.similarity;
@@ -2375,13 +2378,23 @@ Speed and lightness. Respond fast, keep it short. A friendly 3-minute call beats
       }
     }
 
-    const FIRST_MESSAGES = { de: 'Hallo?', en: 'Hello?' };
+    const FIRST_MESSAGES = {
+      de: 'Hallo {{customer_first_name}} {{customer_last_name}}?',
+      en: 'Hello {{customer_first_name}} {{customer_last_name}}?',
+      de_no_name: 'Hallo?',
+      en_no_name: 'Hello?',
+    };
+
+    function getFirstMessageTemplate(lang) {
+      const fc = AGENT_FIELDS[selectedAgent] || {};
+      const hasName = !fc.customerFirstName || fc.customerFirstName.enabled;
+      const baseLang = lang || 'de';
+      const key = hasName ? baseLang : baseLang + '_no_name';
+      return FIRST_MESSAGES[key] || FIRST_MESSAGES[baseLang] || FIRST_MESSAGES.de;
+    }
 
     function syncFirstMessageToLanguage() {
-      const lang = els.elLanguage.value;
-      if (FIRST_MESSAGES[lang]) {
-        els.elFirstMessage.value = FIRST_MESSAGES[lang];
-      }
+      els.elFirstMessage.value = getFirstMessageTemplate(els.elLanguage.value);
     }
 
     function updateSmsCharCount() {
