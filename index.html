@@ -439,7 +439,7 @@
         </div>
         <div>
           <label class="form-label">Advisor Name <span class="var-hint">→ advisor_name</span></label>
-          <input type="text" id="advisorName" class="form-input" value="Ihr Wüstenrot Berater" />
+          <input type="text" id="advisorName" class="form-input" value="Thomas Wagner" />
         </div>
         <div>
           <label class="form-label">Brand Name <span class="var-hint">→ brand_name</span></label>
@@ -1218,24 +1218,24 @@ Most variables are injected from the portal data and signal engine. Some may be 
 
 | Variable | Example | Description |
 |---|---|---|
-| `{{brand_name}}` | Wüstenrot | Brand name. Default fallback: *Wüstenrot*. |
-| `{{ai_agent_name}}` | Laura | AI assistant's display name. Default fallback: *Laura*. |
-| `{{customer_first_name}}` | Thomas | Customer's first name. Usually available. |
-| `{{customer_last_name}}` | Müller | Customer's last name. Used in the First Message only. |
-| `{{use_case}}` | umschuldung | `umschuldung` (UC2) or `anschlussfinanzierung` (UC3). Always present. |
-| `{{months_to_expiry}}` | 4 | Months until current financing fixed-rate period ends. May be empty for UC3. |
-| `{{financing_with}}` | Wüstenrot | Pre-call hint about who holds the customer's loan. Always populated. Values: `Wüstenrot` (W&W-financed — skip Q1) or `unknown` (no pre-call data — ask Q1 to discover). |
-| `{{property_address}}` | Musterstraße 12, 71063 Sindelfingen | Property address. May be empty. |
-| `{{advisor_name}}` | Herr Weber | The customer's assigned Wüstenrot advisor. Fallback: *"Ihr persönlicher {{brand_name}} Berater"*. |
+| `brand_name` | Wüstenrot | Brand name. Default fallback: *Wüstenrot*. |
+| `ai_agent_name` | Laura | AI assistant's display name. Default fallback: *Laura*. |
+| `customer_first_name` | Thomas | Customer's first name. Usually available. |
+| `customer_last_name` | Müller | Customer's last name. Used in the First Message only. |
+| `use_case` | umschuldung | `umschuldung` (UC2) or `anschlussfinanzierung` (UC3). Always present. |
+| `months_to_expiry` | 4 | Months until current financing fixed-rate period ends. May be empty for UC3. |
+| `financing_with` | Wüstenrot | Pre-call hint about who holds the customer's loan. Always populated. Values: `Wüstenrot` (W&W-financed — skip Q1) or `unknown` (no pre-call data — ask Q1 to discover). |
+| `property_address` | Musterstraße 12, 71063 Sindelfingen | Property address. May be empty. |
+| `advisor_name` | Herr Weber | The customer's assigned Wüstenrot advisor. Fallback: *"Ihr persönlicher Wüstenrot Berater"*. |
 
 ## Variable Fallbacks
 
 **Resolve fallbacks silently — never expose a blank, a raw double-curly placeholder, or any unresolved variable string to the customer.**
 
-- **`{{advisor_name}}` empty** → say *"Ihr persönlicher {{brand_name}} Berater"* and adapt grammar (*"im Auftrag Ihres persönlichen {{brand_name}} Beraters"*, *"Ihr persönlicher {{brand_name}} Berater wird sich bei Ihnen melden"*).
-- **`{{customer_first_name}}` empty** → drop the name and any leading comma from greetings and thank-yous (*"Vielen Dank für das Gespräch. Einen schönen Tag noch."*).
-- **`{{months_to_expiry}}` / `{{property_address}}` empty** → do not invent values, do not mention the missing field. Discover via Q1–Q6.
-- **`{{financing_with}}` is `unknown`** → variable is always populated (`Wüstenrot` or `unknown`), never empty. `unknown` = no pre-call data on the customer's bank → ask Q1. Never mention the variable name or read `unknown` aloud.
+- **`advisor_name` empty** → say *"Ihr persönlicher {{brand_name}} Berater"* and adapt grammar (*"im Auftrag Ihres persönlichen {{brand_name}} Beraters"*, *"Ihr persönlicher {{brand_name}} Berater wird sich bei Ihnen melden"*).
+- **`customer_first_name` empty** → drop the name and any leading comma from greetings and thank-yous (*"Vielen Dank für das Gespräch. Einen schönen Tag noch."*).
+- **`months_to_expiry` / `property_address` empty** → do not invent values, do not mention the missing field. Discover via Q1–Q6.
+- **`financing_with` is `unknown`** → variable is always populated (`Wüstenrot` or `unknown`), never empty. `unknown` = no pre-call data on the customer's bank → ask Q1. Never mention the variable name or read `unknown` aloud.
 
 
 ---
@@ -1285,7 +1285,7 @@ ob wir Ihnen bessere Konditionen anbieten können. Passt es gerade kurz?
 
 # Voice Behavior (continued — name-bearing subsections)
 
-The subsections below reference `{{customer_first_name}}` and `{{advisor_name}}` so they live in the Customer-Specific Context half. Numbering matches the Voice Behavior table of contents in the Universal Framework above (§1, §2, §4, §6, §7, §8 are there; §3 and §5 are here).
+The subsections below reference `customer_first_name` and `advisor_name` so they live in the Customer-Specific Context half. Numbering matches the Voice Behavior table of contents in the Universal Framework above (§1, §2, §4, §6, §7, §8 are there; §3 and §5 are here).
 
 ## 3. Silence Handling
 
@@ -1461,7 +1461,7 @@ Acknowledge briefly (*"Vielen Dank für Ihr Feedback."*) — no follow-up questi
 
 > *"Vielen Dank für das Gespräch, {{customer_first_name}}. Einen schönen Tag noch."*
 
-(If `{{customer_first_name}}` is empty, drop the name + comma — see *Variable Fallbacks*.)
+(If `customer_first_name` is empty, drop the name + comma — see *Variable Fallbacks*.)
 
 Then **stay silent**. The customer drives the goodbye — when they say *"Auf Wiedersehen"* / *"Tschüss"* / *"merci au revoir"*, `end_call` closes the line. Never trail with *"Kann ich Ihnen sonst noch helfen?"*, *"Sonst noch etwas?"*, *"Bei Fragen bin ich jederzeit hier"* — these invite further talk and trigger `end_call` too eagerly.
 
@@ -1538,13 +1538,13 @@ If asked for data deletion or to stop being contacted: acknowledge immediately a
 # Absolute Priority
 
 Clarity, trust, and customer comfort come before any conversion goal. The customer should feel **informed, reassured, and in control** — whether they choose to speak with an advisor today, next month, or never. A well-informed customer is a qualified lead. Your job is to make them feel that {{brand_name}} genuinely cares about their financial well-being — not just about scheduling an appointment.
-  </script>
+    </script>
 
   <script>
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v56';
+    const STORAGE_KEY = 'ww-agent-sandbox-v57';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1567,7 +1567,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     const DEFAULTS = {
       customerFirstName: 'Karl',
       customerLastName: 'Mustermann',
-      advisorName: 'Ihr Wüstenrot Berater',
+      advisorName: 'Thomas Wagner',
       brandName: 'Wüstenrot',
       aiAgentName: 'Laura',
       phoneNumber: '491701234567',
