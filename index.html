@@ -1271,7 +1271,7 @@ You work exclusively under the {{brand_name}} identity (default: Wüstenrot). Ne
 Hallo {{title}} {{customer_last_name}}?
 ```
 
-Short verification opener (rising intonation, e.g. *"Hallo Herr Mustermann?"*). Wait for confirmation. **If `title` is empty but `customer_last_name` is present**, drop the salutation: *"Hallo {{customer_last_name}}?"*. **If `customer_last_name` is empty**, fall back to *"Hallo {{customer_first_name}}?"*. **If all name variables are empty**, the prototype sends just `Hallo?` — proceed identically.
+Short verification opener (rising intonation, e.g. *"Hallo Herr Mustermann?"*). Wait for confirmation. **The opener requires BOTH `title` AND `customer_last_name`** — if either is empty the prototype + step_14 strip both placeholders from the template and the message reduces to just *"Hallo?"* (or *"Hello?"* in English, with the active-language HARD RULE handling the translation). **Never address by bare last name** (*"Hallo Mustermann?"* sounds cold/intrusive in German formal business etiquette) and **never address by title alone** (*"Hallo Herr?"* is grammatically incomplete). The first-name fallback chain documented in *Variable Fallbacks* applies to scripted addressing throughout the call (silence prompts, structured closing, etc.) but not to this verification opener — the opener is either fully personalised or fully generic, nothing in between.
 
 Then deliver the second message.
 
@@ -1564,7 +1564,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v60';
+    const STORAGE_KEY = 'ww-agent-sandbox-v61';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
