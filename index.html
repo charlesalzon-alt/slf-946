@@ -1101,6 +1101,8 @@ A `# Current Call Context` block sits at the **END** of this prompt. It is **HIG
 
 **Term clarity:** When using a German mortgage term, add a brief explanation the first time (*"Ihre Zinsbindung — also der Zeitraum, in dem Ihr Zinssatz festgeschrieben ist — …"*).
 
+**HARD RULE — Respect the active conversation language.** Every call starts in German. The `language_detection` system tool is the ONLY way to switch the active conversation language mid-call; do not switch languages on your own. Once the tool has confirmed a new active language with the customer, every subsequent turn — including all scripted German examples below (silence prompts, Step 4 read-back, Step 5 prep notes, Structured Closing, Edge Case responses, etc.) — MUST be translated into that active language. **Treat the German examples in this prompt as templates, not literal text.** Never mix languages within a single turn (no German formality phrase like *"Verstanden"* / *"Entschuldigung"* inside an English sentence).
+
 **HARD RULE — Brevity:** Max 3 sentences per turn before pausing or asking a question.
 
 **HARD RULE — One question per turn:** Never stack two questions in the same message.
@@ -1587,7 +1589,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v63';
+    const STORAGE_KEY = 'ww-agent-sandbox-v64';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
