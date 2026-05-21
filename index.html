@@ -235,6 +235,112 @@
     }
     .btn-secondary:hover { background: var(--color-core-primary-100); }
 
+    /* ───────── Confirmation modal ───────── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+      animation: modalFade 0.15s ease-out;
+    }
+    .modal-backdrop.open { display: flex; }
+    @keyframes modalFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-dialog {
+      background: var(--color-semantic-default-bg);
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 18px 24px 14px;
+      border-bottom: 1px solid var(--color-semantic-default-stroke);
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-semantic-heading-text);
+      margin: 0 0 4px;
+    }
+    .modal-subtitle {
+      font-size: 13px;
+      color: var(--color-semantic-secondary-body-text);
+      margin: 0;
+    }
+    .modal-body {
+      padding: 16px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .modal-body pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 14px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      max-height: 320px;
+      overflow: auto;
+      margin: 0 0 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .modal-confirm-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-semantic-heading-text);
+      margin: 8px 0 6px;
+    }
+    .modal-confirm-hint {
+      font-size: 12px;
+      color: var(--color-semantic-secondary-body-text);
+      margin: 0 0 8px;
+    }
+    .modal-confirm-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--color-semantic-default-stroke);
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .modal-confirm-input:focus {
+      border-color: var(--color-component-button-primary-default-bg);
+      box-shadow: 0 0 0 3px rgba(6, 106, 190, 0.12);
+    }
+    .modal-confirm-input.matched {
+      border-color: var(--color-semantic-success-fill);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+    }
+    .modal-footer {
+      padding: 14px 24px 18px;
+      border-top: 1px solid var(--color-semantic-default-stroke);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .modal-footer .btn-primary,
+    .modal-footer .btn-secondary {
+      padding: 8px 18px;
+      font-size: 14px;
+    }
+
     .toggle-switch {
       position: relative;
       display: inline-block;
@@ -385,6 +491,15 @@
     <div style="display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border-radius: 10px; background: #eef2ff; border: 1px solid #c7d2fe;">
       <span style="font-size: 18px; line-height: 22px; flex-shrink: 0;">🔬</span>
       <p class="text-body-s" style="color: #3730a3; margin: 0;">This is an <strong>experimental prototype</strong> for testing AI agent configurability. It is not a production-ready feature. Settings, prompts, and behaviour may change without notice.</p>
+    </div>
+
+    <!-- CACHE-CLEAR REMINDER -->
+    <div style="display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border-radius: 10px; background: var(--color-semantic-warning-bg); border: 1px solid #f0d78e;">
+      <span style="font-size: 18px; line-height: 22px; flex-shrink: 0;">🔄</span>
+      <div>
+        <p class="text-body-s" style="color: var(--color-semantic-warning-fill); margin: 0 0 4px;"><strong>Refresh with cache clear before each test.</strong> Press <kbd style="padding: 1px 6px; border: 1px solid #f0d78e; border-radius: 4px; background: #fff8e1; font-family: 'JetBrains Mono', monospace; font-size: 12px;">Ctrl + Shift + R</kbd> (Windows / Linux) or <kbd style="padding: 1px 6px; border: 1px solid #f0d78e; border-radius: 4px; background: #fff8e1; font-family: 'JetBrains Mono', monospace; font-size: 12px;">Cmd + Shift + R</kbd> (macOS) regularly — otherwise a cached prompt may trigger and your changes will not take effect.</p>
+        <p class="text-body-s" style="color: var(--color-semantic-warning-fill); margin: 0; opacity: 0.85;">Locally saved settings (phone number, agent selection, prompt edits) are <em>not</em> affected by a hard reload.</p>
+      </div>
     </div>
 
     <!-- SECTION 1: Agent Selection -->
@@ -627,6 +742,26 @@
   <footer class="text-center py-6 text-body-s text-ph-body-sec">
     Built by <span style="color: var(--color-component-button-primary-default-bg); font-weight: 600;">PriceHubble</span> Solution Factory &middot; Wüstenrot AI Agent Sandbox v1.1
   </footer>
+
+  <!-- CONFIRMATION MODAL -->
+  <div id="confirmModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="confirmModalTitle" class="modal-title">Review payload before triggering</h2>
+        <p class="modal-subtitle">This is the exact JSON that will be POSTed to the ActivePieces webhook. The call will start once you confirm.</p>
+      </div>
+      <div class="modal-body">
+        <pre id="confirmModalPayload"></pre>
+        <label class="modal-confirm-label" for="confirmModalInput">Type <code style="background: var(--color-core-neutral-100); padding: 1px 5px; border-radius: 3px; font-family: 'JetBrains Mono', monospace;">yes trigger</code> to enable the call button:</label>
+        <p class="modal-confirm-hint">This safeguard prevents accidental outbound calls. The match is case-insensitive.</p>
+        <input id="confirmModalInput" type="text" class="modal-confirm-input" autocomplete="off" spellcheck="false" placeholder="yes trigger" />
+      </div>
+      <div class="modal-footer">
+        <button id="confirmModalCancel" class="btn-secondary" type="button">Cancel</button>
+        <button id="confirmModalSend" class="btn-primary" type="button" disabled>Confirm &amp; trigger call</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Full agent prompts stored as plain text (not executed as JS) -->
   <script type="text/plain" id="prompt-leads-dsw">
@@ -1608,7 +1743,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v72';
+    const STORAGE_KEY = 'ww-agent-sandbox-v73';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1743,6 +1878,11 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       smsPreview: $('smsPreview'),
       smsCharCount: $('smsCharCount'),
       resetSmsBtn: $('resetSmsBtn'),
+      confirmModal: $('confirmModal'),
+      confirmModalPayload: $('confirmModalPayload'),
+      confirmModalInput: $('confirmModalInput'),
+      confirmModalCancel: $('confirmModalCancel'),
+      confirmModalSend: $('confirmModalSend'),
     };
 
     /* ───────────────────────────────────────────────────────────────
@@ -2200,11 +2340,30 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     }
 
     /* ───────────────────────────────────────────────────────────────
-       TRIGGER BUTTON
+       TRIGGER BUTTON — open confirmation modal
     ─────────────────────────────────────────────────────────────── */
-    els.triggerBtn.addEventListener('click', async () => {
-      const webhookUrl = WEBHOOK_URL;
+    const CONFIRM_PHRASE = 'yes trigger';
+    let pendingPayload = null;
 
+    function openConfirmModal(payload) {
+      pendingPayload = payload;
+      els.confirmModalPayload.textContent = JSON.stringify(payload, null, 2);
+      els.confirmModalInput.value = '';
+      els.confirmModalInput.classList.remove('matched');
+      els.confirmModalSend.disabled = true;
+      els.confirmModal.classList.add('open');
+      setTimeout(() => els.confirmModalInput.focus(), 50);
+    }
+
+    function closeConfirmModal() {
+      els.confirmModal.classList.remove('open');
+      pendingPayload = null;
+      els.confirmModalInput.value = '';
+      els.confirmModalInput.classList.remove('matched');
+      els.confirmModalSend.disabled = true;
+    }
+
+    els.triggerBtn.addEventListener('click', () => {
       const phone = v(els.phoneNumber).replace(/\s/g, '');
       if (!phone || phone.length < 8) {
         log('Please enter a valid phone number.', 'err');
@@ -2213,8 +2372,47 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
       }
 
       saveConfig();
+      openConfirmModal(buildPayload());
+    });
 
-      const payload = buildPayload();
+    els.confirmModalInput.addEventListener('input', () => {
+      const matches = els.confirmModalInput.value.trim().toLowerCase() === CONFIRM_PHRASE;
+      els.confirmModalSend.disabled = !matches;
+      els.confirmModalInput.classList.toggle('matched', matches);
+    });
+
+    els.confirmModalInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !els.confirmModalSend.disabled) {
+        e.preventDefault();
+        els.confirmModalSend.click();
+      }
+    });
+
+    els.confirmModalCancel.addEventListener('click', () => {
+      log('Trigger cancelled by user.', 'warn');
+      closeConfirmModal();
+    });
+
+    els.confirmModal.addEventListener('click', (e) => {
+      if (e.target === els.confirmModal) {
+        closeConfirmModal();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && els.confirmModal.classList.contains('open')) {
+        closeConfirmModal();
+      }
+    });
+
+    els.confirmModalSend.addEventListener('click', async () => {
+      if (!pendingPayload) return;
+      const webhookUrl = WEBHOOK_URL;
+      const payload = pendingPayload;
+      const phone = v(els.phoneNumber).replace(/\s/g, '');
+
+      closeConfirmModal();
+
       log('Triggering ' + selectedAgent + ' callback to +' + phone.replace(/^\+/, '') + '...');
       log('Webhook: ' + webhookUrl);
       setStatus('sending', 'Sending...');
