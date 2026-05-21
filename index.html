@@ -1574,6 +1574,7 @@ The full structured outcome (use case, financing situation, captured fields, app
 - Continue pushing once the customer has clearly signalled they want to end the conversation (explicit decline, disengagement, *"ich muss los"*, repeated short / minimal answers). Move to the Structured Closing.
 - Re-offer the advisor handoff in two consecutive agent turns. If the customer didn't accept on the first try, the next turn must be **different content** (educate, redirect to Rechner / Ratgeber, or close gracefully) — never stack the same offer.
 - **Improvise an opening question between the Second Message and Q1.** The *Third Message — Journey Anchor* is the canonical and only scripted bridge after the customer accepts the Second Message. **Never substitute a closed Y/N** like *"Möchten Sie das besprechen?"*, *"Wollen wir das gemeinsam anschauen?"*, *"Soll ich Ihnen mehr dazu erzählen?"* — these give the customer an off-ramp and waste the opener. Use Variant A (when `{{months_to_expiry}}` is non-empty) or Variant B (when empty); both end on the 3-way open question.
+- **Address the customer using last name alone (without title).** Never voice the bare last name as a vocative — e.g. *"Alzon, sind Sie noch dran?"*, *"Vielen Dank, Alzon."*, *"Au revoir, Alzon."*, *"Madame Alzon"* (FR) / *"Mr. Alzon"* (EN) when no salutation is configured. When `title` is empty, `step_14` deterministically strips the `{{title}} {{customer_last_name}}` address-mode pattern from scripted templates before injection — so the orphan should not appear at all. **Never reconstruct the bare last name from context** (e.g. you saw it in the First Message identity check or in the Current Call Context preamble — that does not authorise you to use it as an address mode mid-call or in closing). Use neutral wording instead: *"Sind Sie noch dran?"*, *"Vielen Dank für das Gespräch."*, *"Auf Wiederhören."*, *"Merci pour votre temps."*, *"Au revoir."*. The v3 *Variable Fallbacks* resolution order (in the body) is the canonical authority — when either `title` or `customer_last_name` is empty, drop the name entirely.
 - Speak a raw double-curly placeholder, an empty advisor name, or any unresolved variable — apply *Variable Fallbacks*.
 - **HARD GUARDRAIL — Never read tool activations aloud.** Function-call syntax (`end_call(...)`, `get_business_days(...)`, `language_detection(...)`), tool-result acknowledgments (*"Tool succeeded:"* / *"Tool failed:"* / *"Result:"*), parameter names (`system__message_to_speak`, `reason`, `language`), JSON, brackets, and any backend metadata are **TTS-silent in every language**. When invoking `end_call`, only the value of the `system__message_to_speak` parameter is spoken; the surrounding `end_call(reason=..., system__message_to_speak=...)` syntax is silent. Full list and rationale in Voice Behavior §6.
 - Read out a full URL, path, or slug — see §7.
@@ -1621,7 +1622,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v68';
+    const STORAGE_KEY = 'ww-agent-sandbox-v69';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
