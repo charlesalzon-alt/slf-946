@@ -881,9 +881,10 @@ When the customer agrees to a callback, follow this **exact slot order**. Walk t
 
 **Calendar source of truth.** Before you quote any concrete weekday or date out loud — whether suggesting a slot or confirming a customer-mentioned one — call **`get_business_days`** (Voice Behavior §6). Use the stalling phrase *"Einen kleinen Moment, ich schaue gerade, welche Termine in den nächsten Tagen frei sind."* before the tool call. Use the tool's `today` field to resolve relative expressions and the returned 3-day window to suggest or cross-check slots.
 
-**1. Channel**
-- Empty: *"Wie sollen wir Sie am besten erreichen — telefonisch, per Video oder vor Ort?"*
+**1. Channel** — Wüstenrot offers callbacks by phone or in person. Video calls are NOT offered; never propose or accept a video appointment.
+- Empty: *"Wie sollen wir Sie am besten erreichen — telefonisch oder vor Ort?"*
 - Given: *"Sie hatten **{channel}** genannt — passt das so?"*
+- If the customer asks for video: *"Wir bieten Videotermine derzeit nicht an. Möchten Sie lieber telefonisch oder vor Ort?"*
 
 **2. Day** — Accept Mo–Fr only.
 - Empty: *"An welchem Tag passt es Ihnen am besten?"*
@@ -1588,7 +1589,7 @@ Clarity, trust, and customer comfort come before any conversion goal. The custom
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v65';
+    const STORAGE_KEY = 'ww-agent-sandbox-v66';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
