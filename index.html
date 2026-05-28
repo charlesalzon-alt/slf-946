@@ -574,107 +574,7 @@
       </div>
     </div>
 
-    <!-- SECTION 4: ElevenLabs Configuration -->
-    <div class="card">
-      <div class="collapsible-header" id="advancedToggle">
-        <div>
-          <div class="text-subheading-m">Voice & Language</div>
-          <p class="text-body-s text-ph-body-sec">Language, voice, speaking style and speed settings</p>
-        </div>
-        <svg class="chevron" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div id="advancedPanel" class="mt-6 space-y-5" style="display: none;">
-
-        <!-- Language -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="form-label">Language <span class="var-hint">→ language</span></label>
-            <select id="elLanguage" class="form-input">
-              <option value="de" selected>Deutsch (de)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Voice -->
-        <div>
-          <label class="form-label">Voice <span class="var-hint">→ voice_id</span></label>
-          <p class="form-sublabel">Select which voice the AI agent uses. "Agent default" keeps the current setting.</p>
-          <select id="elVoiceId" class="form-input">
-            <option value="">Agent default</option>
-            <option value="zKHQdbB8oaQ7roNTiDTK" selected>Laura</option>
-            <option value="DEZHhPbmb8LVZmWufkCh">Anna</option>
-            <option value="MGG5Irb57ATHvyIeTEYo">Maya</option>
-            <option value="IWm8DnJ4NGjFI7QAM5lM">Stephan</option>
-            <option value="Cqbq4nsuUe1we6J45miU">Helmut</option>
-          </select>
-          <div id="voiceIdHint" class="mt-1" style="font-size: 13px; color: #9ca3af; font-family: 'JetBrains Mono', monospace;"></div>
-        </div>
-
-        <!-- AI Agent Name (linked to voice selection) -->
-        <div>
-          <label class="form-label">AI Agent Name <span class="var-hint">→ ai_agent_name</span></label>
-          <p class="form-sublabel">Auto-filled based on the selected voice. You can override it.</p>
-          <input type="text" id="aiAgentName" class="form-input" value="Laura" />
-        </div>
-
-        <!-- TTS Sliders -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label class="form-label">Stability <span class="var-hint">→ stability</span></label>
-            <p class="form-sublabel">Lower = more expressive, higher = more consistent.</p>
-            <div class="flex items-center gap-3">
-              <input type="range" id="elStability" class="range-slider flex-1" min="0.35" max="0.65" step="0.05" value="0.5" />
-              <span id="elStabilityVal" class="text-body-s font-mono w-8 text-right">0.5</span>
-            </div>
-          </div>
-          <div>
-            <label class="form-label">Similarity <span class="var-hint">→ similarity_boost</span></label>
-            <p class="form-sublabel">Higher = more faithful to the original voice.</p>
-            <div class="flex items-center gap-3">
-              <input type="range" id="elSimilarity" class="range-slider flex-1" min="0.60" max="0.90" step="0.05" value="0.75" />
-              <span id="elSimilarityVal" class="text-body-s font-mono w-8 text-right">0.75</span>
-            </div>
-          </div>
-          <div>
-            <label class="form-label">Speed <span class="var-hint">→ speed</span></label>
-            <p class="form-sublabel">1.0 = natural pace. Lower = slower, higher = faster.</p>
-            <div class="flex items-center gap-3">
-              <input type="range" id="elSpeed" class="range-slider flex-1" min="0.85" max="1.15" step="0.05" value="0.95" />
-              <span id="elSpeedVal" class="text-body-s font-mono w-8 text-right">1.0</span>
-            </div>
-          </div>
-        </div>
-
-
-      </div>
-    </div>
-
-    <!-- SECTION 4b: SMS Pre-warning -->
-    <div class="card">
-      <div class="flex items-center justify-between mb-1">
-        <div>
-          <div class="text-subheading-m">SMS Pre-warning</div>
-          <p class="text-body-s text-ph-body-sec">Send an SMS to the customer a few seconds before the AI agent calls, so they expect the call.</p>
-        </div>
-        <label class="toggle-switch">
-          <input type="checkbox" id="smsEnabled" checked />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-      <div id="smsPanel" class="mt-4 space-y-3">
-        <div>
-          <label class="form-label">SMS Template <span class="var-hint">→ sms_preview</span></label>
-          <p class="form-sublabel">The text message sent before the call. You can use placeholders like <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{customer_first_name}}</code> and <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">{{customer_last_name}}</code> — they'll be replaced automatically. Sender ID displayed on the customer's phone: <code class="font-mono text-xs bg-ph-neutral-100 px-1 py-0.5 rounded">WUESTENROT</code> (alphanumeric — one-way SMS, customers cannot reply to it).</p>
-          <textarea id="smsPreview" class="form-textarea" style="min-height: 80px; font-size: 14px; font-family: 'Inter', sans-serif;"></textarea>
-          <div class="flex items-center justify-between mt-2">
-            <span class="text-body-s text-ph-body-sec"><span id="smsCharCount">0</span> characters</span>
-            <button id="resetSmsBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">Reset to default</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SECTION 5: Phone + Trigger -->
+    <!-- SECTION 4: Phone + Trigger -->
     <div class="card">
       <div class="text-subheading-m mb-4">Start AI Call</div>
       <div class="flex flex-col sm:flex-row gap-4 items-end">
@@ -1181,7 +1081,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v75';
+    const STORAGE_KEY = 'ww-agent-sandbox-v76';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1208,15 +1108,9 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       title: 'Herr',
       advisorName: 'Thomas Wagner',
       brandName: 'Wüstenrot',
-      aiAgentName: 'Laura',
       phoneNumber: '491701234567',
-      language: 'de',
       financingWith: 'Wüstenrot',
       monthsToExpiry: '4',
-      voiceId: 'zKHQdbB8oaQ7roNTiDTK',
-      stability: 0.5,
-      similarity: 0.75,
-      speed: 0.95,
     };
 
     const AGENT_FIELDS = {
@@ -1226,7 +1120,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
         title:            { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
         advisorName:       { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
         brandName:         { enabled: true },
-        smsEnabled:        { enabled: true },
         financingWith:     { enabled: false, reason: 'Not used by this agent — financing status discovered in-call' },
         monthsToExpiry:    { enabled: false, reason: 'Not used by this agent — DSW is outbound cold-call, no prior financing data' },
       },
@@ -1236,13 +1129,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
         title:            { enabled: true },
         advisorName:       { enabled: true },
         brandName:         { enabled: false, reason: 'Hardcoded to Wüstenrot — no longer configurable' },
-        aiAgentName:       { enabled: false, reason: 'Hardcoded to Laura — no longer configurable' },
-        elLanguage:        { enabled: false, reason: 'German-only — no language override' },
-        elVoiceId:         { enabled: false, reason: 'Set at the ElevenLabs agent level' },
-        elStability:       { enabled: false, reason: 'Set at the ElevenLabs agent level' },
-        elSimilarity:      { enabled: false, reason: 'Set at the ElevenLabs agent level' },
-        elSpeed:           { enabled: false, reason: 'Set at the ElevenLabs agent level' },
-        smsEnabled:        { enabled: true },
         financingWith:     { enabled: true },
         monthsToExpiry:    { enabled: true },
       },
@@ -1264,11 +1150,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       },
     };
 
-    const SMS_TEMPLATES = {
-      de: 'Hallo {{customer_first_name}} {{customer_last_name}}, gleich ruft Sie unsere digitale Assistenz Laura von Wüstenrot zu Ihrem Anliegen an. Bitte nehmen Sie den Anruf an — es dauert nur einen Moment. Vielen Dank!',
-      de_no_name: 'Hallo, unsere digitale Assistenz Laura von Wüstenrot ruft Sie in wenigen Sekunden zu Ihrem Anliegen an. Bitte nehmen Sie den Anruf an — es dauert nur einen Moment. Vielen Dank!',
-    };
-
     /* ───────────────────────────────────────────────────────────────
        DOM REFERENCES
     ─────────────────────────────────────────────────────────────── */
@@ -1285,18 +1166,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       leadId: $('leadId'),
       financingWith: $('financingWith'),
       monthsToExpiry: $('monthsToExpiry'),
-      aiAgentName: $('aiAgentName'),
-      advancedToggle: $('advancedToggle'),
-      advancedPanel: $('advancedPanel'),
-      elLanguage: $('elLanguage'),
-      elVoiceId: $('elVoiceId'),
-      voiceIdHint: $('voiceIdHint'),
-      elStability: $('elStability'),
-      elStabilityVal: $('elStabilityVal'),
-      elSimilarity: $('elSimilarity'),
-      elSimilarityVal: $('elSimilarityVal'),
-      elSpeed: $('elSpeed'),
-      elSpeedVal: $('elSpeedVal'),
       phoneNumber: $('phoneNumber'),
       triggerBtn: $('triggerBtn'),
       statusBadge: $('statusBadge'),
@@ -1305,11 +1174,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       payloadPreview: $('payloadPreview'),
       logContainer: $('logContainer'),
       clearLogBtn: $('clearLogBtn'),
-      smsEnabled: $('smsEnabled'),
-      smsPanel: $('smsPanel'),
-      smsPreview: $('smsPreview'),
-      smsCharCount: $('smsCharCount'),
-      resetSmsBtn: $('resetSmsBtn'),
       confirmModal: $('confirmModal'),
       confirmModalPayload: $('confirmModalPayload'),
       confirmModalInput: $('confirmModalInput'),
@@ -1335,13 +1199,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       line.textContent = '[' + time + '] ' + msg;
       els.logContainer.appendChild(line);
       els.logContainer.scrollTop = els.logContainer.scrollHeight;
-    }
-
-    function getSmsTemplate(lang) {
-      const fc = AGENT_FIELDS[selectedAgent] || {};
-      const hasName = !fc.customerFirstName || fc.customerFirstName.enabled;
-      const key = hasName ? (lang || 'de') : (lang || 'de') + '_no_name';
-      return SMS_TEMPLATES[key] || SMS_TEMPLATES[lang || 'de'] || SMS_TEMPLATES.de;
     }
 
     function setStatus(state, text) {
@@ -1377,9 +1234,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
           if (key === 'advisorName') inputEl.value = d.advisorName || DEFAULTS.advisorName;
         }
       }
-      els.smsPreview.value = getSmsTemplate(els.elLanguage.value);
-      updateSmsCharCount();
-
       const fwRule = config.financingWith || FIELD_DEFAULTS;
       const fwWrapper = els.financingWith.closest('div');
       if (!fwRule.enabled) {
@@ -1399,8 +1253,8 @@ Respect and efficiency. The customer did not ask for this call — earn their at
         els.monthsToExpiry.value = (stored === undefined || stored === null) ? DEFAULTS.monthsToExpiry : stored;
       }
 
-      // Hide-only fields: brand/ai-agent/language/voice/TTS sliders. No value restoration.
-      const hideOnlyFields = ['brandName', 'aiAgentName', 'elLanguage', 'elVoiceId', 'elStability', 'elSimilarity', 'elSpeed'];
+      // Hide-only fields: brand. No value restoration.
+      const hideOnlyFields = ['brandName'];
       for (const key of hideOnlyFields) {
         const inputEl = els[key];
         if (!inputEl) continue;
@@ -1409,10 +1263,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
         if (!wrapper) continue;
         wrapper.style.display = rule.enabled ? '' : 'none';
       }
-    }
-
-    function updateSmsCharCount() {
-      els.smsCharCount.textContent = els.smsPreview.value.length.toLocaleString();
     }
 
     /* ───────────────────────────────────────────────────────────────
@@ -1433,17 +1283,9 @@ Respect and efficiency. The customer did not ask for this call — earn their at
         title: persist('title', els.title, DEFAULTS.title),
         advisorName: persist('advisorName', els.advisorName, DEFAULTS.advisorName),
         brandName: persist('brandName', els.brandName, DEFAULTS.brandName),
-        aiAgentName: els.aiAgentName.value,
         phoneNumber: els.phoneNumber.value,
-        language: els.elLanguage.value,
         financingWith: persist('financingWith', els.financingWith, DEFAULTS.financingWith),
         monthsToExpiry: persist('monthsToExpiry', els.monthsToExpiry, DEFAULTS.monthsToExpiry),
-        voiceId: els.elVoiceId.value,
-        stability: parseFloat(els.elStability.value),
-        similarity: parseFloat(els.elSimilarity.value),
-        speed: parseFloat(els.elSpeed.value),
-        smsEnabled: els.smsEnabled.checked,
-        smsPreview: els.smsPreview.value,
         prompts: {
           // Only leads_dsw is editable from the sandbox; finanzierung_uc2uc3 is owned by n8n.
           leads_dsw: selectedAgent === 'leads_dsw' ? '' : (loadRaw().prompts?.leads_dsw || ''),
@@ -1464,22 +1306,10 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       els.title.value = (d.title !== undefined) ? d.title : DEFAULTS.title;
       els.advisorName.value = d.advisorName || DEFAULTS.advisorName;
       els.brandName.value = d.brandName || DEFAULTS.brandName;
-      els.aiAgentName.value = d.aiAgentName || DEFAULTS.aiAgentName;
       els.phoneNumber.value = d.phoneNumber || DEFAULTS.phoneNumber;
-      els.elLanguage.value = d.language || DEFAULTS.language;
       els.financingWith.value = d.financingWith || DEFAULTS.financingWith;
       els.monthsToExpiry.value = (d.monthsToExpiry === undefined || d.monthsToExpiry === null) ? DEFAULTS.monthsToExpiry : d.monthsToExpiry;
-      els.elVoiceId.value = d.voiceId || DEFAULTS.voiceId;
-      els.elStability.value = d.stability ?? DEFAULTS.stability;
-      els.elSimilarity.value = d.similarity ?? DEFAULTS.similarity;
-      els.elSpeed.value = d.speed ?? DEFAULTS.speed;
 
-      els.smsEnabled.checked = d.smsEnabled !== false;
-      els.smsPreview.value = d.smsPreview || getSmsTemplate(d.language || DEFAULTS.language);
-      updateSmsPanel();
-      updateSmsCharCount();
-
-      updateSliderDisplays();
       syncAgentPills();
     }
 
@@ -1517,77 +1347,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     });
 
     /* ───────────────────────────────────────────────────────────────
-       UI INTERACTIONS
-    ─────────────────────────────────────────────────────────────── */
-    function updateSliderDisplays() {
-      els.elStabilityVal.textContent = parseFloat(els.elStability.value).toFixed(2);
-      els.elSimilarityVal.textContent = parseFloat(els.elSimilarity.value).toFixed(2);
-      els.elSpeedVal.textContent = parseFloat(els.elSpeed.value).toFixed(2);
-    }
-
-    const VOICE_NAMES = {
-      'zKHQdbB8oaQ7roNTiDTK': 'Laura',
-      'DEZHhPbmb8LVZmWufkCh': 'Anna',
-      'MGG5Irb57ATHvyIeTEYo': 'Maya',
-      'IWm8DnJ4NGjFI7QAM5lM': 'Stephan',
-      'Cqbq4nsuUe1we6J45miU': 'Helmut',
-    };
-
-    function updateVoiceIdHint() {
-      const val = els.elVoiceId.value;
-      els.voiceIdHint.textContent = val ? val : '';
-    }
-
-    function syncAgentNameToVoice() {
-      const vid = els.elVoiceId.value;
-      if (VOICE_NAMES[vid]) {
-        els.aiAgentName.value = VOICE_NAMES[vid];
-      }
-    }
-
-    function updateSmsCharCount() {
-      els.smsCharCount.textContent = els.smsPreview.value.length.toLocaleString();
-    }
-
-    function updateSmsPanel() {
-      els.smsPanel.style.opacity = els.smsEnabled.checked ? '1' : '0.4';
-      els.smsPreview.disabled = !els.smsEnabled.checked;
-    }
-
-    function syncSmsToLanguage() {
-      els.smsPreview.value = getSmsTemplate(els.elLanguage.value);
-      updateSmsCharCount();
-    }
-
-    els.smsEnabled.addEventListener('change', () => { updateSmsPanel(); saveConfig(); });
-    els.smsPreview.addEventListener('input', updateSmsCharCount);
-    els.resetSmsBtn.addEventListener('click', () => {
-      els.smsPreview.value = getSmsTemplate(els.elLanguage.value);
-      updateSmsCharCount();
-      saveConfig();
-      log('SMS template reset to default');
-    });
-
-    els.elLanguage.addEventListener('change', () => {
-      syncSmsToLanguage();
-    });
-    els.elVoiceId.addEventListener('change', () => {
-      updateVoiceIdHint();
-      syncAgentNameToVoice();
-    });
-
-    els.elStability.addEventListener('input', () => { updateSliderDisplays(); });
-    els.elSimilarity.addEventListener('input', () => { updateSliderDisplays(); });
-    els.elSpeed.addEventListener('input', () => { updateSliderDisplays(); });
-
-    els.advancedToggle.addEventListener('click', () => {
-      const panel = els.advancedPanel;
-      const isOpen = panel.style.display !== 'none';
-      panel.style.display = isOpen ? 'none' : 'block';
-      els.advancedToggle.classList.toggle('open', !isOpen);
-    });
-
-    /* ───────────────────────────────────────────────────────────────
        PAYLOAD BUILDER
     ─────────────────────────────────────────────────────────────── */
     function buildPayload() {
@@ -1607,8 +1366,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       };
 
       if (includeIfEnabled('brandName')) payload.brand_name = v(els.brandName, DEFAULTS.brandName);
-      if (includeIfEnabled('aiAgentName')) payload.ai_agent_name = v(els.aiAgentName, DEFAULTS.aiAgentName);
-      if (includeIfEnabled('elLanguage')) payload.language = v(els.elLanguage, DEFAULTS.language);
 
       const lid = v(els.leadId);
       if (lid) payload.lead_id = lid;
@@ -1621,19 +1378,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
         payload.months_to_expiry = (els.monthsToExpiry.value === '' || els.monthsToExpiry.value === null)
           ? ''
           : String(els.monthsToExpiry.value).trim();
-      }
-
-      if (includeIfEnabled('elVoiceId')) {
-        const vid = v(els.elVoiceId);
-        if (vid) payload.voice_id = vid;
-      }
-      if (includeIfEnabled('elStability')) payload.stability = parseFloat(els.elStability.value);
-      if (includeIfEnabled('elSimilarity')) payload.similarity_boost = parseFloat(els.elSimilarity.value);
-      if (includeIfEnabled('elSpeed')) payload.speed = parseFloat(els.elSpeed.value);
-
-      payload.sms_enabled = els.smsEnabled.checked;
-      if (els.smsEnabled.checked) {
-        payload.sms_preview = els.smsPreview.value;
       }
 
       return payload;
@@ -1806,7 +1550,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
        INIT
     ─────────────────────────────────────────────────────────────── */
     loadConfig();
-    updateVoiceIdHint();
     applyFieldRestrictions();
     log('Loaded agent: ' + selectedAgent);
   </script>
