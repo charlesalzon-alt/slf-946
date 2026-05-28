@@ -725,7 +725,7 @@
     <div class="modal-dialog">
       <div class="modal-header">
         <h2 id="confirmModalTitle" class="modal-title">Review payload before triggering</h2>
-        <p class="modal-subtitle">This is the exact JSON that will be POSTed to the ActivePieces webhook. The call will start once you confirm.</p>
+        <p class="modal-subtitle">This is the exact JSON that will be POSTed to the n8n trigger webhook (workflow <code>AxjAwu0ZwKvcgw8Z</code>). The call will start once you confirm.</p>
       </div>
       <div class="modal-body">
         <pre id="confirmModalPayload"></pre>
@@ -1181,7 +1181,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v74';
+    const STORAGE_KEY = 'ww-agent-sandbox-v75';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1191,7 +1191,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
 
     const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
     const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
-    const WEBHOOK_URL = 'https://pricehubble.activepieces.com/api/v1/webhooks/tHewifIPkyNCMQdOb9TxE/sync';
+    const WEBHOOK_URL = 'https://pricehubble.app.n8n.cloud/webhook/ww-trigger-agent';
 
     /* ── Agent Prompts (loaded from <script type="text/plain"> tags) */
 
@@ -1766,7 +1766,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
           setStatus('success', 'Triggered!');
           log('Webhook fired (mode: ' + result.mode + ', status: ' + result.status + ')', 'ok');
           if (result.mode === 'no-cors') {
-            log('⚠ no-cors mode: payload sent with Content-Type text/plain — verify ActivePieces received it.', 'warn');
+            log('⚠ no-cors mode: payload sent with Content-Type text/plain — verify n8n received it.', 'warn');
           }
           if (result.body) {
             log('Response: ' + JSON.stringify(result.body).substring(0, 200), 'ok');
