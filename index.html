@@ -454,6 +454,191 @@
       color: #166534;
       margin-left: 6px;
     }
+
+    /* v3.21 — inline warning under empty lead_id input */
+    .form-warning {
+      margin-top: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+      line-height: 17px;
+      color: #92400e;
+      background: var(--color-semantic-warning-bg);
+      border-left: 3px solid var(--color-semantic-warning-fill);
+      border-radius: 4px;
+    }
+    .hidden { display: none !important; }
+
+    /* v3.21 — Resolved Variables card */
+    .vars-grid {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      column-gap: 16px;
+      row-gap: 6px;
+      margin: 0;
+      font-size: 13px;
+      line-height: 20px;
+    }
+    .vars-grid dt {
+      font-weight: 600;
+      color: var(--color-semantic-secondary-body-text);
+    }
+    .vars-grid dd {
+      margin: 0;
+      color: var(--color-semantic-primary-body-text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      word-break: break-all;
+    }
+    .vars-grid dd.empty { color: var(--color-component-form-placeholder-text); font-style: italic; }
+    .vars-raw {
+      margin-top: 12px;
+      padding: 12px;
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 11px;
+      line-height: 16px;
+      max-height: 280px;
+      overflow: auto;
+      white-space: pre;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 8px;
+      background: var(--color-core-neutral-100);
+      color: var(--color-core-neutral-500);
+      vertical-align: middle;
+    }
+    .badge-webhook       { background: #dcfce7; color: #166534; }
+    .badge-custom_record { background: #dbeafe; color: #1e40af; }
+    .badge-urn_lookup    { background: #fef3c7; color: #92400e; }
+    .badge-created       { background: #ffedd5; color: #9a3412; }
+
+    /* v3.23 — Testing-context banner (collapsible, demo-safe). */
+    .testing-notes {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid #3b82f6;
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #1e3a8a;
+    }
+    .testing-notes > summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1e3a8a;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .testing-notes > summary::-webkit-details-marker { display: none; }
+    .testing-notes > summary::before {
+      content: '▸';
+      font-size: 11px;
+      transition: transform 0.15s;
+      color: #2563eb;
+    }
+    .testing-notes[open] > summary::before { transform: rotate(90deg); }
+    .testing-notes-pill {
+      margin-left: auto;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .testing-notes ul {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .testing-notes li {
+      font-size: 13px;
+      line-height: 19px;
+      color: #1e3a8a;
+    }
+    .testing-notes li strong { color: #0c1e4d; }
+
+    /* v3.23 — RECOMMENDED pill next to the lead_id label. */
+    .pill-recommended {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #fef3c7;
+      color: #92400e;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    /* v3.23 — Soft warning border when lead_id is empty (empty IS valid; no red). */
+    .form-input.warn-empty {
+      border-color: var(--color-semantic-warning-fill);
+      box-shadow: 0 0 0 1px var(--color-semantic-warning-fill);
+    }
+
+    /* v3.23 — "Restore test lead" tiny link next to the lead_id field. */
+    .restore-link {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-component-button-link-text);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .restore-link:hover { opacity: 0.8; }
+
+    /* v3.23 — Per-row data-source hints in the Resolved Variables card. */
+    .source-tag {
+      display: block;
+      margin-top: 2px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--color-semantic-secondary-body-text);
+      font-style: italic;
+    }
+    .source-tag.empty-tag {
+      color: #92400e;
+      background: var(--color-semantic-warning-bg);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    /* v3.23 — Custom-record diagnostic block inside the Resolved Variables card. */
+    .cr-hint {
+      margin-top: 14px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 17px;
+      color: #92400e;
+      background: var(--color-semantic-warning-bg);
+      border-left: 3px solid var(--color-semantic-warning-fill);
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -502,6 +687,19 @@
       </div>
     </div>
 
+    <!-- v3.23 — Testing-context banner (collapsible, OPEN by default; tasteful for client demos). -->
+    <details class="testing-notes" open>
+      <summary>
+        Hinweise zum Testen
+        <span class="testing-notes-pill">Test- &amp; Demo-Werkzeug</span>
+      </summary>
+      <ul>
+        <li><strong>Was ist das?</strong> Outbound-Trigger für den Wüstenrot-Finanzierung-Agenten. Beim Absenden des Formulars startet ein echter ElevenLabs-Anruf über den PriceHubble-n8n-Flow.</li>
+        <li><strong>Microsite vs. Prototyp.</strong> Bei einem echten Microsite-Anruf liefern die PriceHubble-Lead-/Dossier-APIs sowohl <code>lead_id</code> als auch die Kundenidentität automatisch. Aus diesem Prototyp werden beide Werte manuell eingetragen. Variablen aus Custom Records (<code>financing_with</code>, <code>months_to_expiry</code>) sind nur dann gefüllt, wenn das Dossier in PriceHubble existiert <em>und</em> ein Loan-Custom-Record gepflegt ist.</li>
+        <li><strong><code>lead_id</code> ist wichtig.</strong> Stark empfohlen: eine echte <code>lead_id</code> eintragen (das Feld ist mit unserer Test-Lead vorbefüllt). Ohne <code>lead_id</code> fällt n8n auf Dossier-URN-Lookup oder Create-Lead zurück — beides funktioniert, bildet aber das Microsite-Verhalten nicht ab.</li>
+      </ul>
+    </details>
+
     <!-- SECTION 1: Agent Selection -->
     <div class="card">
       <div class="text-subheading-m mb-1">Select an agent use case</div>
@@ -528,48 +726,30 @@
       <p class="text-body-s text-ph-body-sec mb-4">Customer and advisor information used during the call. These values are automatically inserted into the agent's script.</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="form-label">Customer First Name <span class="var-hint">→ customer_first_name</span></label>
-          <input type="text" id="customerFirstName" class="form-input" value="Karl" />
+          <label class="form-label">Advisor First Name <span class="var-hint">→ advisor_first_name</span></label>
+          <p class="form-sublabel">PB owner template 8.2 ships this from <code>user.get.firstName</code>. The n8n flow concatenates with the last name into the resolved <code>{{advisor_name}}</code> dynamic variable.</p>
+          <input type="text" id="advisorFirstName" class="form-input" value="Thomas" />
         </div>
         <div>
-          <label class="form-label">Customer Last Name <span class="var-hint">→ customer_last_name</span></label>
-          <p class="form-sublabel">Used together with the salutation as the default address mode in the call (<em>Herr Mustermann</em> / <em>Frau Müller</em>). If empty, the agent drops the name entirely instead of using the first name.</p>
-          <input type="text" id="customerLastName" class="form-input" value="Mustermann" />
-        </div>
-        <div>
-          <label class="form-label">Salutation <span class="var-hint">→ title</span></label>
-          <p class="form-sublabel">Customer's preferred German salutation. Combined with the last name as the default address mode (<em>Herr Mustermann</em> / <em>Frau Müller</em>) — applied only when <strong>both</strong> salutation and last name are present. If either is empty, the agent drops the name entirely in conversation. (First name is used only in the First Message to confirm identity, never as an in-call address mode.)</p>
-          <select id="title" class="form-input">
-            <option value="Herr">Herr</option>
-            <option value="Frau">Frau</option>
-            <option value="">(empty — agent drops the name in conversation)</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Advisor Name <span class="var-hint">→ advisor_name</span></label>
-          <input type="text" id="advisorName" class="form-input" value="Thomas Wagner" />
+          <label class="form-label">Advisor Last Name <span class="var-hint">→ advisor_last_name</span></label>
+          <p class="form-sublabel">PB owner template 8.2 ships this from <code>user.get.lastName</code>.</p>
+          <input type="text" id="advisorLastName" class="form-input" value="Wagner" />
         </div>
         <div>
           <label class="form-label">Brand Name <span class="var-hint">→ brand_name</span></label>
           <input type="text" id="brandName" class="form-input" value="Wüstenrot" />
         </div>
         <div>
-          <label class="form-label">Lead ID <span class="var-hint">→ lead_id</span></label>
-          <p class="form-sublabel">Optional. If set, the call recap is logged on this existing lead instead of creating a new one.</p>
-          <input type="text" id="leadId" class="form-input" placeholder="(empty = new lead)" value="" />
+          <label class="form-label">Lead ID <span class="var-hint">→ lead_id</span> <span class="pill-recommended">Empfohlen für sauberen Test</span></label>
+          <p class="form-sublabel">Required for the new architecture: n8n calls <em>Get Lead Details</em> to resolve <code>title</code> / <code>customer_first_name</code> / <code>customer_last_name</code>. If empty, n8n falls back to the prototype-style Create Lead chain with empty identity (agent's First Message collapses to the self-intro-only template).</p>
+          <input type="text" id="leadId" class="form-input" placeholder="(empty = Create Lead fallback)" value="b216c2fe-2edc-462b-a4d2-424a35f9eaf8" />
+          <p class="form-warning hidden" id="leadIdWarning">Leer lassen → n8n fällt auf Dossier-URN-Lookup oder Create-Lead zurück. Für sauberen Microsite-Test eine echte <code>lead_id</code> verwenden.</p>
+          <button type="button" id="restoreLeadIdBtn" class="restore-link" title="Setzt die Test-Lead-ID b216c2fe-… wieder ein">↺ Test-Lead zurücksetzen</button>
         </div>
         <div>
-          <label class="form-label">Financing With <span class="var-hint">→ financing_with</span></label>
-          <p class="form-sublabel">Who currently holds the customer's financing. Drives the agent's pitch: <strong>Wüstenrot</strong> → skip Q1, retention wording. <strong>unknown</strong> → ask Q1, branch in-call.</p>
-          <select id="financingWith" class="form-input">
-            <option value="Wüstenrot" selected>Wüstenrot</option>
-            <option value="unknown">unknown</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Months to Expiry <span class="var-hint">→ months_to_expiry</span></label>
-          <p class="form-sublabel">Months until the customer's Zinsbindung ends. <strong>Number</strong> → agent confirms in passing ("…läuft in 4 Monaten aus, möchten Sie das näher besprechen?"). <strong>Empty</strong> → agent asks Q2 open-ended to discover.</p>
-          <input type="number" id="monthsToExpiry" class="form-input" min="0" max="240" step="1" placeholder="(leer = unbekannt)" value="4" />
+          <label class="form-label">Dossier ID (URN) <span class="var-hint">→ dossier_id</span></label>
+          <p class="form-sublabel">PB owner template 8.2 ships this from <code>{{context.urn}}</code>. n8n's <em>Normalise Dossier ID</em> Code node validates the URN format and the <em>Get Custom Records by Dossier</em> HTTP node uses the extracted UUID to fetch the dossier's custom records. From v3.17, <code>financing_with</code> and <code>days_to_expiry</code> (→ months) are resolved from <code>value.loans[0].bank</code> / <code>value.loans[0].remainingTermDays</code> on that response. Prototype-fired calls (which hit a non-PH dossier or no dossier) fall through to the "unknown / ASK Q1+Q2" branch. A leading <code>dossier_id:</code> prefix is stripped defensively.</p>
+          <input type="text" id="dossierId" class="form-input" placeholder="urn:phi:dossier:47741cdf-fa7a-4e14-aa62-83cad4c8f354" value="urn:phi:dossier:47741cdf-fa7a-4e14-aa62-83cad4c8f354" />
         </div>
       </div>
     </div>
@@ -611,6 +791,45 @@
         <div class="log-info">Agent sandbox initialized. Select an agent and configure parameters.</div>
       </div>
     </div>
+
+    <!-- RESOLVED VARIABLES CARD (v3.21) -->
+    <section id="resolvedVarsCard" class="card hidden">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-subheading-m">Aufgelöste Variablen <span id="leadSourceBadge" class="badge"></span></div>
+        <button id="rvHideBtn" class="text-body-s font-semibold" style="color: var(--color-component-button-link-text); background: none; border: none; cursor: pointer;">Verbergen</button>
+      </div>
+      <p class="form-sublabel">Surfaced from the n8n <code>Respond to Webhook</code> node — same variables that EL sees in <code>conversation_initiation_client_data.dynamic_variables</code>, plus <code>lead_id_source</code> showing which fallback tier resolved the lead. The grey hint under each value shows where the variable originates.</p>
+      <dl class="vars-grid">
+        <dt>Lead ID</dt>
+        <dd><span id="rv-lead-id"></span><small id="rv-lead-id-tag" class="source-tag"></small></dd>
+        <dt>Conversation ID</dt>
+        <dd><span id="rv-conv-id"></span><small id="rv-conv-id-tag" class="source-tag"></small></dd>
+        <dt>Dossier URN</dt>
+        <dd><span id="rv-dossier"></span><small id="rv-dossier-tag" class="source-tag"></small></dd>
+        <dt>Anrede</dt>
+        <dd><span id="rv-title"></span><small id="rv-title-tag" class="source-tag"></small></dd>
+        <dt>Kunde</dt>
+        <dd><span id="rv-customer"></span><small id="rv-customer-tag" class="source-tag"></small></dd>
+        <dt>Telefon</dt>
+        <dd><span id="rv-phone"></span><small id="rv-phone-tag" class="source-tag"></small></dd>
+        <dt>Berater</dt>
+        <dd><span id="rv-advisor"></span><small id="rv-advisor-tag" class="source-tag"></small></dd>
+        <dt>Finanzierung mit</dt>
+        <dd><span id="rv-financing"></span><small id="rv-financing-tag" class="source-tag"></small></dd>
+        <dt>Use-case</dt>
+        <dd><span id="rv-usecase"></span><small id="rv-usecase-tag" class="source-tag"></small></dd>
+        <dt>Restlaufzeit</dt>
+        <dd><span id="rv-expiry"></span><small id="rv-expiry-tag" class="source-tag"></small></dd>
+      </dl>
+      <!-- v3.23 — Custom-record diagnostic block: only shows when all three CR-backed vars are empty. -->
+      <div id="rvCustomRecordHint" class="cr-hint hidden">
+        ⚠ Custom-Record-Variablen leer. Entweder existiert das Dossier nicht in PriceHubble, oder es hat keinen Loan-Custom-Record gepflegt. Bei Microsite-Anrufen wären diese Felder normalerweise befüllt.
+      </div>
+      <details class="mt-3" style="font-size:12px;">
+        <summary style="cursor:pointer; color: var(--color-component-button-link-text); font-weight:600;">Raw payload</summary>
+        <pre id="rv-raw" class="vars-raw"></pre>
+      </details>
+    </section>
 
   </main>
 
@@ -1081,7 +1300,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v76';
+    const STORAGE_KEY = 'ww-agent-sandbox-v82';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1089,8 +1308,9 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     }
     if (localStorage.getItem('ww-dev-mode') === '1') document.body.classList.add('dev-mode');
 
-    const AGENT_ID = 'agent_9901kn6sw3fdfk7swck5eejpf0rq';
-    const PHONE_ID = 'phnum_9501kn6vev22e5j8mrc1h3fcqcmy';
+    // v3.14: agent_id and agent_phone_number_id are now hardcoded inside the n8n
+    // workflow's Call ElevenLabs Outbound HTTP node (AxjAwu0ZwKvcgw8Z). The
+    // prototype no longer needs to know or send them.
     const WEBHOOK_URL = 'https://pricehubble.app.n8n.cloud/webhook/ww-trigger-agent';
 
     /* ── Agent Prompts (loaded from <script type="text/plain"> tags) */
@@ -1102,35 +1322,38 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     };
 
     /* ── Default Settings ──────────────────────────────────────── */
+    // v3.16: customer_first_name / customer_last_name / title / email are
+    // no longer shipped by this prototype. n8n resolves them from Get Lead
+    // Details (PH leads API) at call time when `lead_id` is provided.
+    // When `lead_id` is empty, n8n falls back to the Create Lead chain and
+    // the First Message collapses to the self-intro-only template.
+    //
+    // v3.17: financing_with / days_to_expiry are also no longer shipped.
+    // n8n resolves them from the dossier's Get Custom Records response
+    // (loans[0].bank / loans[0].remainingTermDays) at call time. The
+    // prototype operates outside the PH API context, so prototype-fired
+    // calls naturally fall through to the "unknown / ASK Q1+Q2" branch —
+    // that's the intended demo behaviour.
     const DEFAULTS = {
-      customerFirstName: 'Karl',
-      customerLastName: 'Mustermann',
-      title: 'Herr',
-      advisorName: 'Thomas Wagner',
+      advisorFirstName: 'Thomas',
+      advisorLastName: 'Wagner',
       brandName: 'Wüstenrot',
       phoneNumber: '491701234567',
-      financingWith: 'Wüstenrot',
-      monthsToExpiry: '4',
+      dossierId: 'urn:phi:dossier:47741cdf-fa7a-4e14-aa62-83cad4c8f354',
     };
 
     const AGENT_FIELDS = {
       leads_dsw: {
-        customerFirstName: { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
-        customerLastName:  { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
-        title:            { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
-        advisorName:       { enabled: false, reason: 'Not available — outbound call, no prior customer data' },
-        brandName:         { enabled: true },
-        financingWith:     { enabled: false, reason: 'Not used by this agent — financing status discovered in-call' },
-        monthsToExpiry:    { enabled: false, reason: 'Not used by this agent — DSW is outbound cold-call, no prior financing data' },
+        advisorFirstName: { enabled: false, reason: 'Not available — outbound call, no prior advisor binding' },
+        advisorLastName:  { enabled: false, reason: 'Not available — outbound call, no prior advisor binding' },
+        brandName:        { enabled: true },
+        dossierId:        { enabled: false, reason: 'Not used by this agent — no dossier context for outbound cold-call' },
       },
       finanzierung_uc2uc3: {
-        customerFirstName: { enabled: true },
-        customerLastName:  { enabled: true },
-        title:            { enabled: true },
-        advisorName:       { enabled: true },
-        brandName:         { enabled: false, reason: 'Hardcoded to Wüstenrot — no longer configurable' },
-        financingWith:     { enabled: true },
-        monthsToExpiry:    { enabled: true },
+        advisorFirstName: { enabled: true },
+        advisorLastName:  { enabled: true },
+        brandName:        { enabled: false, reason: 'Hardcoded to Wüstenrot — no longer configurable' },
+        dossierId:        { enabled: true },
       },
     };
     const FIELD_DEFAULTS = { enabled: true };
@@ -1158,20 +1381,44 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     const els = {
       agentPills: $('agentPills'),
       agentDescription: $('agentDescription'),
-      customerFirstName: $('customerFirstName'),
-      customerLastName: $('customerLastName'),
-      title: $('title'),
-      advisorName: $('advisorName'),
+      advisorFirstName: $('advisorFirstName'),
+      advisorLastName: $('advisorLastName'),
       brandName: $('brandName'),
       leadId: $('leadId'),
-      financingWith: $('financingWith'),
-      monthsToExpiry: $('monthsToExpiry'),
+      dossierId: $('dossierId'),
       phoneNumber: $('phoneNumber'),
       triggerBtn: $('triggerBtn'),
       statusBadge: $('statusBadge'),
       statusText: $('statusText'),
       showPayloadBtn: $('showPayloadBtn'),
       payloadPreview: $('payloadPreview'),
+      leadIdWarning: $('leadIdWarning'),
+      restoreLeadIdBtn: $('restoreLeadIdBtn'),
+      resolvedVarsCard: $('resolvedVarsCard'),
+      leadSourceBadge: $('leadSourceBadge'),
+      rvLeadId: $('rv-lead-id'),
+      rvConvId: $('rv-conv-id'),
+      rvDossier: $('rv-dossier'),
+      rvTitle: $('rv-title'),
+      rvCustomer: $('rv-customer'),
+      rvPhone: $('rv-phone'),
+      rvAdvisor: $('rv-advisor'),
+      rvFinancing: $('rv-financing'),
+      rvUsecase: $('rv-usecase'),
+      rvExpiry: $('rv-expiry'),
+      rvLeadIdTag: $('rv-lead-id-tag'),
+      rvConvIdTag: $('rv-conv-id-tag'),
+      rvDossierTag: $('rv-dossier-tag'),
+      rvTitleTag: $('rv-title-tag'),
+      rvCustomerTag: $('rv-customer-tag'),
+      rvPhoneTag: $('rv-phone-tag'),
+      rvAdvisorTag: $('rv-advisor-tag'),
+      rvFinancingTag: $('rv-financing-tag'),
+      rvUsecaseTag: $('rv-usecase-tag'),
+      rvExpiryTag: $('rv-expiry-tag'),
+      rvCustomRecordHint: $('rvCustomRecordHint'),
+      rvRaw: $('rv-raw'),
+      rvHideBtn: $('rvHideBtn'),
       logContainer: $('logContainer'),
       clearLogBtn: $('clearLogBtn'),
       confirmModal: $('confirmModal'),
@@ -1208,7 +1455,8 @@ Respect and efficiency. The customer did not ask for this call — earn their at
 
     function applyFieldRestrictions() {
       const config = AGENT_FIELDS[selectedAgent] || {};
-      const fields = { customerFirstName: els.customerFirstName, customerLastName: els.customerLastName, title: els.title, advisorName: els.advisorName };
+      // v3.16: per-agent enabled fields with text-input value restoration.
+      const fields = { advisorFirstName: els.advisorFirstName, advisorLastName: els.advisorLastName };
 
       for (const [key, inputEl] of Object.entries(fields)) {
         const rule = config[key] || FIELD_DEFAULTS;
@@ -1228,29 +1476,24 @@ Respect and efficiency. The customer did not ask for this call — earn their at
           inputEl.disabled = false;
           inputEl.placeholder = '';
           const d = loadRaw();
-          if (key === 'customerFirstName') inputEl.value = d.customerFirstName || DEFAULTS.customerFirstName;
-          if (key === 'customerLastName') inputEl.value = d.customerLastName ?? DEFAULTS.customerLastName;
-          if (key === 'title') inputEl.value = (d.title !== undefined) ? d.title : DEFAULTS.title;
-          if (key === 'advisorName') inputEl.value = d.advisorName || DEFAULTS.advisorName;
+          if (key === 'advisorFirstName') inputEl.value = d.advisorFirstName || DEFAULTS.advisorFirstName;
+          if (key === 'advisorLastName') inputEl.value = d.advisorLastName || DEFAULTS.advisorLastName;
         }
       }
-      const fwRule = config.financingWith || FIELD_DEFAULTS;
-      const fwWrapper = els.financingWith.closest('div');
-      if (!fwRule.enabled) {
-        fwWrapper.style.display = 'none';
-      } else {
-        fwWrapper.style.display = '';
-        els.financingWith.value = loadRaw().financingWith || DEFAULTS.financingWith;
-      }
 
-      const mteRule = config.monthsToExpiry || FIELD_DEFAULTS;
-      const mteWrapper = els.monthsToExpiry.closest('div');
-      if (!mteRule.enabled) {
-        mteWrapper.style.display = 'none';
-      } else {
-        mteWrapper.style.display = '';
-        const stored = loadRaw().monthsToExpiry;
-        els.monthsToExpiry.value = (stored === undefined || stored === null) ? DEFAULTS.monthsToExpiry : stored;
+      // Hide-or-show fields with value restoration when enabled.
+      const valueRestoreToggleFields = [
+        { key: 'dossierId', el: els.dossierId, def: DEFAULTS.dossierId },
+      ];
+      for (const { key, el, def } of valueRestoreToggleFields) {
+        const rule = config[key] || FIELD_DEFAULTS;
+        const wrapper = el.closest('div');
+        if (!rule.enabled) {
+          wrapper.style.display = 'none';
+        } else {
+          wrapper.style.display = '';
+          el.value = loadRaw()[key] || def;
+        }
       }
 
       // Hide-only fields: brand. No value restoration.
@@ -1273,21 +1516,16 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       const prev = loadRaw();
       // Per-agent gated reads: when a field is disabled for the active agent,
       // `applyFieldRestrictions` may have wiped the UI value — preserve whatever
-      // was previously persisted so it survives an agent round-trip (e.g. user
-      // switches Finanzierung → DSW → Finanzierung must still see "Mustermann").
+      // was previously persisted so it survives an agent round-trip.
       const persist = (fcKey, el, def) => (fc[fcKey] && !fc[fcKey].enabled) ? (prev[fcKey] ?? def) : el.value;
       const data = {
         selectedAgent,
-        customerFirstName: persist('customerFirstName', els.customerFirstName, DEFAULTS.customerFirstName),
-        customerLastName: persist('customerLastName', els.customerLastName, DEFAULTS.customerLastName),
-        title: persist('title', els.title, DEFAULTS.title),
-        advisorName: persist('advisorName', els.advisorName, DEFAULTS.advisorName),
+        advisorFirstName: persist('advisorFirstName', els.advisorFirstName, DEFAULTS.advisorFirstName),
+        advisorLastName: persist('advisorLastName', els.advisorLastName, DEFAULTS.advisorLastName),
         brandName: persist('brandName', els.brandName, DEFAULTS.brandName),
         phoneNumber: els.phoneNumber.value,
-        financingWith: persist('financingWith', els.financingWith, DEFAULTS.financingWith),
-        monthsToExpiry: persist('monthsToExpiry', els.monthsToExpiry, DEFAULTS.monthsToExpiry),
+        dossierId: persist('dossierId', els.dossierId, DEFAULTS.dossierId),
         prompts: {
-          // Only leads_dsw is editable from the sandbox; finanzierung_uc2uc3 is owned by n8n.
           leads_dsw: selectedAgent === 'leads_dsw' ? '' : (loadRaw().prompts?.leads_dsw || ''),
         },
       };
@@ -1301,14 +1539,11 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     function loadConfig() {
       const d = loadRaw();
       if (d.selectedAgent) selectedAgent = d.selectedAgent;
-      els.customerFirstName.value = d.customerFirstName || DEFAULTS.customerFirstName;
-      els.customerLastName.value = d.customerLastName ?? DEFAULTS.customerLastName;
-      els.title.value = (d.title !== undefined) ? d.title : DEFAULTS.title;
-      els.advisorName.value = d.advisorName || DEFAULTS.advisorName;
+      els.advisorFirstName.value = d.advisorFirstName || DEFAULTS.advisorFirstName;
+      els.advisorLastName.value = d.advisorLastName || DEFAULTS.advisorLastName;
       els.brandName.value = d.brandName || DEFAULTS.brandName;
       els.phoneNumber.value = d.phoneNumber || DEFAULTS.phoneNumber;
-      els.financingWith.value = d.financingWith || DEFAULTS.financingWith;
-      els.monthsToExpiry.value = (d.monthsToExpiry === undefined || d.monthsToExpiry === null) ? DEFAULTS.monthsToExpiry : d.monthsToExpiry;
+      els.dossierId.value = d.dossierId || DEFAULTS.dossierId;
 
       syncAgentPills();
     }
@@ -1355,29 +1590,31 @@ Respect and efficiency. The customer did not ask for this call — earn their at
 
       const fc = AGENT_FIELDS[selectedAgent] || {};
       const includeIfEnabled = (key) => !fc[key] || fc[key].enabled;
+      // v3.16: PB no longer ships customer_first_name / customer_last_name /
+      // title / email. n8n resolves them from Get Lead Details at call time.
+      // The prototype mirrors the PB contract — those fields are NOT sent.
+      // v3.17: financing_with / days_to_expiry are also NOT sent. n8n
+      // resolves them from Get Custom Records (loans[0].bank /
+      // loans[0].remainingTermDays). The prototype falls through to the
+      // unknown / ASK Q1+Q2 branch — that's the intended demo behaviour.
       const payload = {
-        agent_id: AGENT_ID,
-        agent_phone_number_id: PHONE_ID,
         phone_number: fullPhone,
-        customer_first_name: (fc.customerFirstName && !fc.customerFirstName.enabled) ? '' : v(els.customerFirstName),
-        customer_last_name: (fc.customerLastName && !fc.customerLastName.enabled) ? '' : v(els.customerLastName),
-        title: (fc.title && !fc.title.enabled) ? '' : v(els.title),
-        advisor_name: (fc.advisorName && !fc.advisorName.enabled) ? '' : v(els.advisorName, DEFAULTS.advisorName),
       };
 
+      if (includeIfEnabled('advisorFirstName')) {
+        payload.advisor_first_name = v(els.advisorFirstName, DEFAULTS.advisorFirstName);
+      }
+      if (includeIfEnabled('advisorLastName')) {
+        payload.advisor_last_name = v(els.advisorLastName, DEFAULTS.advisorLastName);
+      }
       if (includeIfEnabled('brandName')) payload.brand_name = v(els.brandName, DEFAULTS.brandName);
 
       const lid = v(els.leadId);
       if (lid) payload.lead_id = lid;
 
-      if (includeIfEnabled('financingWith')) {
-        payload.financing_with = v(els.financingWith, DEFAULTS.financingWith);
-      }
-
-      if (includeIfEnabled('monthsToExpiry')) {
-        payload.months_to_expiry = (els.monthsToExpiry.value === '' || els.monthsToExpiry.value === null)
-          ? ''
-          : String(els.monthsToExpiry.value).trim();
+      if (includeIfEnabled('dossierId')) {
+        const did = v(els.dossierId).trim();
+        if (did) payload.dossier_id = did;
       }
 
       return payload;
@@ -1513,12 +1750,20 @@ Respect and efficiency. The customer did not ask for this call — earn their at
             log('⚠ no-cors mode: payload sent with Content-Type text/plain — verify n8n received it.', 'warn');
           }
           if (result.body) {
-            log('Response: ' + JSON.stringify(result.body).substring(0, 200), 'ok');
+            try {
+              log('Response:\n' + JSON.stringify(result.body, null, 2), 'ok');
+            } catch (_) {
+              log('Response (un-stringifiable): ' + String(result.body), 'ok');
+            }
+            populateResolvedVarsCard(result.body);
           }
         } else {
           setStatus('error', result.mode === 'failed' ? 'Network error' : 'Error ' + result.status);
           log('Webhook failed (mode: ' + result.mode + ', status: ' + result.status + ')' + (result.error ? ' — ' + result.error : ''), 'err');
-          if (result.body) log('Error body: ' + JSON.stringify(result.body).substring(0, 300), 'err');
+          if (result.body) {
+            try { log('Error body:\n' + JSON.stringify(result.body, null, 2), 'err'); }
+            catch (_) { log('Error body (un-stringifiable): ' + String(result.body), 'err'); }
+          }
         }
       } catch (err) {
         setStatus('error', 'Failed');
@@ -1530,6 +1775,127 @@ Respect and efficiency. The customer did not ask for this call — earn their at
         }
       }
     });
+
+    /* ───────────────────────────────────────────────────────────────
+       v3.21 — RESOLVED VARIABLES CARD
+       Populated from the n8n `Respond to Webhook` payload.
+       Tolerates legacy responses (missing fields) without throwing.
+    ─────────────────────────────────────────────────────────────── */
+    const LEAD_SOURCE_LABELS = {
+      webhook:       'webhook',
+      custom_record: 'custom record',
+      urn_lookup:    'urn lookup',
+      created:       'created',
+    };
+    const LEAD_SOURCE_BADGES = ['badge-webhook','badge-custom_record','badge-urn_lookup','badge-created'];
+
+    /* v3.23 — Per-row source labels. `source` is the always-shown muted hint;
+       `empty` is the soft-warning text appended next to the "—" placeholder
+       when the field comes back empty. */
+    const RV_FIELD_META = {
+      leadId:    { source: '(from n8n lead resolution — see badge above)', empty: '(empty — lead not resolved on any tier)' },
+      convId:    { source: '(from ElevenLabs)',                            empty: '(empty — EL call did not start)' },
+      dossier:   { source: '(from webhook)',                               empty: '(empty — no dossier_id supplied)' },
+      title:     { source: '(from PH leads API)',                          empty: '(empty — Create-Lead branch / lead has no title)' },
+      customer:  { source: '(from PH leads API)',                          empty: '(empty — Create-Lead branch / lead has no name)' },
+      phone:     { source: '(from webhook)',                               empty: '(empty)' },
+      advisor:   { source: '(from webhook)',                               empty: '(empty)' },
+      financing: { source: '(from custom records)',                        empty: '(empty — no custom record or missing field)' },
+      usecase:   { source: '(derived in n8n)',                             empty: '(empty)' },
+      expiry:    { source: '(from custom records)',                        empty: '(empty — no custom record or missing field)' },
+    };
+
+    function setRvField(valEl, tagEl, val, metaKey) {
+      if (!valEl) return;
+      const s = (val == null || val === '') ? '' : String(val);
+      valEl.textContent = s || '—';
+      valEl.classList.toggle('empty', !s);
+      if (tagEl) {
+        const meta = RV_FIELD_META[metaKey] || { source: '', empty: '(empty)' };
+        tagEl.textContent = s ? meta.source : meta.empty;
+        tagEl.classList.toggle('empty-tag', !s);
+      }
+    }
+
+    function populateResolvedVarsCard(body) {
+      if (!els.resolvedVarsCard) return;
+      // Defensive: legacy responses without the v3.21 shape (e.g. {status:"call_triggered"})
+      // — show whatever we can and tag the badge as 'unknown'.
+      const b = body || {};
+      const dv = (b.dynamic_variables && typeof b.dynamic_variables === 'object') ? b.dynamic_variables : {};
+
+      setRvField(els.rvLeadId,   els.rvLeadIdTag,   b.lead_id || dv.lead_id || '', 'leadId');
+      setRvField(els.rvConvId,   els.rvConvIdTag,   b.conversation_id || '',       'convId');
+      setRvField(els.rvDossier,  els.rvDossierTag,  b.dossier_id || dv.dossier_id || '', 'dossier');
+      setRvField(els.rvTitle,    els.rvTitleTag,    dv.title || '',                'title');
+      const fn = dv.customer_first_name || '';
+      const ln = dv.customer_last_name || '';
+      setRvField(els.rvCustomer, els.rvCustomerTag, (fn + ' ' + ln).trim(),         'customer');
+      setRvField(els.rvPhone,    els.rvPhoneTag,    dv.customer_phone_number || '', 'phone');
+      setRvField(els.rvAdvisor,  els.rvAdvisorTag,  dv.advisor_name || '',          'advisor');
+      const financingVal = dv.financing_with || '';
+      setRvField(els.rvFinancing, els.rvFinancingTag, financingVal,                 'financing');
+      setRvField(els.rvUsecase,  els.rvUsecaseTag,  dv.use_case || '',              'usecase');
+      const months = (dv.months_to_expiry == null || dv.months_to_expiry === '') ? '' : String(dv.months_to_expiry);
+      const days   = (dv.days_to_expiry   == null || dv.days_to_expiry   === '') ? '' : String(dv.days_to_expiry);
+      let expiry = '';
+      if (months !== '' && days !== '')      expiry = months + ' Monate (' + days + ' Tage)';
+      else if (months !== '')                expiry = months + ' Monate';
+      else if (days !== '')                  expiry = days + ' Tage';
+      setRvField(els.rvExpiry, els.rvExpiryTag, expiry, 'expiry');
+
+      // Badge
+      const src = (b.lead_id_source && String(b.lead_id_source)) || 'unknown';
+      if (els.leadSourceBadge) {
+        els.leadSourceBadge.textContent = LEAD_SOURCE_LABELS[src] || src;
+        LEAD_SOURCE_BADGES.forEach(c => els.leadSourceBadge.classList.remove(c));
+        const cls = 'badge-' + src;
+        if (LEAD_SOURCE_BADGES.indexOf(cls) !== -1) els.leadSourceBadge.classList.add(cls);
+      }
+
+      // v3.23 — Show the custom-record diagnostic only when ALL three CR-backed vars are empty.
+      // Catches the common "fired against a non-PH dossier" mistake.
+      if (els.rvCustomRecordHint) {
+        const crEmpty = !financingVal && !months && !days;
+        els.rvCustomRecordHint.classList.toggle('hidden', !crEmpty);
+      }
+
+      // Raw payload pretty-print
+      if (els.rvRaw) {
+        try { els.rvRaw.textContent = JSON.stringify(b, null, 2); }
+        catch (_) { els.rvRaw.textContent = String(b); }
+      }
+
+      els.resolvedVarsCard.classList.remove('hidden');
+    }
+
+    if (els.rvHideBtn) {
+      els.rvHideBtn.addEventListener('click', () => {
+        els.resolvedVarsCard.classList.add('hidden');
+      });
+    }
+
+    /* v3.21 — toggle inline warning under the lead_id input.
+       v3.23 — also flip the soft warn-empty border on the input itself. */
+    const TEST_LEAD_ID = 'b216c2fe-2edc-462b-a4d2-424a35f9eaf8';
+    function refreshLeadIdWarning() {
+      if (!els.leadId) return;
+      const empty = !((els.leadId.value || '').trim());
+      if (els.leadIdWarning) els.leadIdWarning.classList.toggle('hidden', !empty);
+      els.leadId.classList.toggle('warn-empty', empty);
+    }
+    if (els.leadId) {
+      els.leadId.addEventListener('input', refreshLeadIdWarning);
+    }
+    if (els.restoreLeadIdBtn) {
+      els.restoreLeadIdBtn.addEventListener('click', () => {
+        if (!els.leadId) return;
+        els.leadId.value = TEST_LEAD_ID;
+        refreshLeadIdWarning();
+        saveConfig();
+        log('Test-Lead-ID wiederhergestellt: ' + TEST_LEAD_ID);
+      });
+    }
 
     /* ───────────────────────────────────────────────────────────────
        CLEAR LOG
@@ -1551,6 +1917,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     ─────────────────────────────────────────────────────────────── */
     loadConfig();
     applyFieldRestrictions();
+    refreshLeadIdWarning();
     log('Loaded agent: ' + selectedAgent);
   </script>
 </body>
