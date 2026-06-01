@@ -698,6 +698,7 @@
         <li><strong>Microsite vs. Prototyp.</strong> Bei einem echten Microsite-Anruf liefern die PriceHubble-Lead-/Dossier-APIs sowohl <code>lead_id</code> als auch die Kundenidentität automatisch. Aus diesem Prototyp werden beide Werte manuell eingetragen. Variablen aus Custom Records (<code>financing_with</code>, <code>months_to_expiry</code>) sind nur dann gefüllt, wenn das Dossier in PriceHubble existiert <em>und</em> ein Loan-Custom-Record gepflegt ist.</li>
         <li data-agent="finanzierung_uc2uc3"><strong><code>lead_id</code> ist wichtig.</strong> Stark empfohlen: eine echte <code>lead_id</code> eintragen (das Feld ist mit unserer Test-Lead vorbefüllt). Ohne <code>lead_id</code> fällt n8n auf Dossier-URN-Lookup oder Create-Lead zurück — beides funktioniert, bildet aber das Microsite-Verhalten nicht ab.</li>
         <li data-agent="leads_dsw">Bei DSW (Inbound Leads / Partner-Tipps) ist die <code>lead_id</code> nicht relevant — der Anruf reagiert auf einen neu eingegangenen Tipp, nicht auf einen bekannten Kontakt. Lassen Sie das Feld leer, n8n verwendet den Create-Lead-Branch.</li>
+        <li data-agent="leads_dsw">Outbound Kalt-Anruf für Leads/Tipps Handling. Es gibt keine Vorab-Daten zum Kunden — n8n erstellt bei jedem Anruf einen frischen PH-Lead nur mit der Telefonnummer und Proxy-Daten (<code>firstName</code>/<code>lastName</code> leer, <code>source</code>=<code>callcenter-dsw</code>, <code>requestContact</code>=<code>true</code>). Empfohlen für Demos und Tests dieses Use Case.</li>
       </ul>
     </details>
 
@@ -801,26 +802,35 @@
       </div>
       <p class="form-sublabel">Surfaced from the n8n <code>Respond to Webhook</code> node — same variables that EL sees in <code>conversation_initiation_client_data.dynamic_variables</code>, plus <code>lead_id_source</code> showing which fallback tier resolved the lead. The grey hint under each value shows where the variable originates.</p>
       <dl class="vars-grid">
-        <dt>Lead ID</dt>
-        <dd><span id="rv-lead-id"></span><small id="rv-lead-id-tag" class="source-tag"></small></dd>
-        <dt>Conversation ID</dt>
-        <dd><span id="rv-conv-id"></span><small id="rv-conv-id-tag" class="source-tag"></small></dd>
-        <dt>Dossier URN</dt>
-        <dd><span id="rv-dossier"></span><small id="rv-dossier-tag" class="source-tag"></small></dd>
-        <dt>Anrede</dt>
-        <dd><span id="rv-title"></span><small id="rv-title-tag" class="source-tag"></small></dd>
-        <dt>Kunde</dt>
-        <dd><span id="rv-customer"></span><small id="rv-customer-tag" class="source-tag"></small></dd>
-        <dt>Telefon</dt>
-        <dd><span id="rv-phone"></span><small id="rv-phone-tag" class="source-tag"></small></dd>
-        <dt>Berater</dt>
-        <dd><span id="rv-advisor"></span><small id="rv-advisor-tag" class="source-tag"></small></dd>
-        <dt>Finanzierung mit</dt>
-        <dd><span id="rv-financing"></span><small id="rv-financing-tag" class="source-tag"></small></dd>
-        <dt>Use-case</dt>
-        <dd><span id="rv-usecase"></span><small id="rv-usecase-tag" class="source-tag"></small></dd>
-        <dt>Restlaufzeit</dt>
-        <dd><span id="rv-expiry"></span><small id="rv-expiry-tag" class="source-tag"></small></dd>
+        <dt data-field="leadId">Lead ID</dt>
+        <dd data-field="leadId"><span id="rv-lead-id"></span><small id="rv-lead-id-tag" class="source-tag"></small></dd>
+        <dt data-field="convId">Conversation ID</dt>
+        <dd data-field="convId"><span id="rv-conv-id"></span><small id="rv-conv-id-tag" class="source-tag"></small></dd>
+        <dt data-field="dossier">Dossier URN</dt>
+        <dd data-field="dossier"><span id="rv-dossier"></span><small id="rv-dossier-tag" class="source-tag"></small></dd>
+        <dt data-field="title">Anrede</dt>
+        <dd data-field="title"><span id="rv-title"></span><small id="rv-title-tag" class="source-tag"></small></dd>
+        <dt data-field="customer">Kunde</dt>
+        <dd data-field="customer"><span id="rv-customer"></span><small id="rv-customer-tag" class="source-tag"></small></dd>
+        <dt data-field="phone">Telefon</dt>
+        <dd data-field="phone"><span id="rv-phone"></span><small id="rv-phone-tag" class="source-tag"></small></dd>
+        <dt data-field="advisor">Berater</dt>
+        <dd data-field="advisor"><span id="rv-advisor"></span><small id="rv-advisor-tag" class="source-tag"></small></dd>
+        <dt data-field="financing">Finanzierung mit</dt>
+        <dd data-field="financing"><span id="rv-financing"></span><small id="rv-financing-tag" class="source-tag"></small></dd>
+        <dt data-field="usecase">Use-case</dt>
+        <dd data-field="usecase"><span id="rv-usecase"></span><small id="rv-usecase-tag" class="source-tag"></small></dd>
+        <dt data-field="expiry">Restlaufzeit</dt>
+        <dd data-field="expiry"><span id="rv-expiry"></span><small id="rv-expiry-tag" class="source-tag"></small></dd>
+        <!-- v3.25 — DSW-specific rows, hidden for finanzierung via RV_FIELDS_BY_AGENT. -->
+        <dt data-field="tipSource">Tipp-Quelle</dt>
+        <dd data-field="tipSource"><span id="rv-tip-source"></span><small id="rv-tip-source-tag" class="source-tag"></small></dd>
+        <dt data-field="aiAgentName">AI-Assistenz</dt>
+        <dd data-field="aiAgentName"><span id="rv-ai-agent-name"></span><small id="rv-ai-agent-name-tag" class="source-tag"></small></dd>
+        <dt data-field="brandName">Marke</dt>
+        <dd data-field="brandName"><span id="rv-brand-name"></span><small id="rv-brand-name-tag" class="source-tag"></small></dd>
+        <dt data-field="currentBusinessDay">Heutiges Datum</dt>
+        <dd data-field="currentBusinessDay"><span id="rv-current-business-day"></span><small id="rv-current-business-day-tag" class="source-tag"></small></dd>
       </dl>
       <!-- v3.23 — Custom-record diagnostic block: only shows when all three CR-backed vars are empty. -->
       <div id="rvCustomRecordHint" class="cr-hint hidden">
@@ -1301,7 +1311,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v83';
+    const STORAGE_KEY = 'ww-agent-sandbox-v84';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1312,7 +1322,16 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     // v3.14: agent_id and agent_phone_number_id are now hardcoded inside the n8n
     // workflow's Call ElevenLabs Outbound HTTP node (AxjAwu0ZwKvcgw8Z). The
     // prototype no longer needs to know or send them.
-    const WEBHOOK_URL = 'https://pricehubble.app.n8n.cloud/webhook/ww-trigger-agent';
+    //
+    // v3.25: split into a per-agent map so DSW (which uses its own n8n flow
+    // with a different webhook path) gets routed to the right endpoint.
+    // The DSW webhook only exists once `python3 tests/push_v3.py --workflow dsw`
+    // has successfully created the workflow on n8n cloud — the trigger
+    // handler checks reachability and surfaces a warning otherwise.
+    const WEBHOOK_URLS = {
+      finanzierung_uc2uc3: 'https://pricehubble.app.n8n.cloud/webhook/ww-trigger-agent',
+      leads_dsw:           'https://pricehubble.app.n8n.cloud/webhook/dsw-trigger-agent',
+    };
 
     /* ── Agent Prompts (loaded from <script type="text/plain"> tags) */
 
@@ -1417,6 +1436,15 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       rvFinancingTag: $('rv-financing-tag'),
       rvUsecaseTag: $('rv-usecase-tag'),
       rvExpiryTag: $('rv-expiry-tag'),
+      // v3.25 — DSW-specific Resolved Variables rows
+      rvTipSource: $('rv-tip-source'),
+      rvAiAgentName: $('rv-ai-agent-name'),
+      rvBrandName: $('rv-brand-name'),
+      rvCurrentBusinessDay: $('rv-current-business-day'),
+      rvTipSourceTag: $('rv-tip-source-tag'),
+      rvAiAgentNameTag: $('rv-ai-agent-name-tag'),
+      rvBrandNameTag: $('rv-brand-name-tag'),
+      rvCurrentBusinessDayTag: $('rv-current-business-day-tag'),
       rvCustomRecordHint: $('rvCustomRecordHint'),
       rvRaw: $('rv-raw'),
       rvHideBtn: $('rvHideBtn'),
@@ -1732,7 +1760,13 @@ Respect and efficiency. The customer did not ask for this call — earn their at
 
     els.confirmModalSend.addEventListener('click', async () => {
       if (!pendingPayload) return;
-      const webhookUrl = WEBHOOK_URL;
+      // v3.25 — pick the webhook URL by selected agent. Surface a soft warning
+      // for DSW since the workflow only exists on n8n cloud after the user has
+      // supplied the EL prerequisites and run `push_v3.py --workflow dsw`.
+      const webhookUrl = WEBHOOK_URLS[selectedAgent] || WEBHOOK_URLS.finanzierung_uc2uc3;
+      if (selectedAgent === 'leads_dsw') {
+        log('⚠ DSW webhook target: ' + webhookUrl + ' — wenn n8n 404 zurückgibt, ist der DSW-Workflow noch nicht erstellt (siehe push_v3.py --workflow dsw).', 'warn');
+      }
       const payload = pendingPayload;
       const phone = v(els.phoneNumber).replace(/\s/g, '');
 
@@ -1793,7 +1827,10 @@ Respect and efficiency. The customer did not ask for this call — earn their at
 
     /* v3.23 — Per-row source labels. `source` is the always-shown muted hint;
        `empty` is the soft-warning text appended next to the "—" placeholder
-       when the field comes back empty. */
+       when the field comes back empty.
+       v3.25 — Extended with four DSW-specific rows (tipSource, aiAgentName,
+       brandName, currentBusinessDay). For DSW, leadId always reads "(from PH
+       Create Lead)" because the flow creates a fresh proxy lead on every call. */
     const RV_FIELD_META = {
       leadId:    { source: '(from n8n lead resolution — see badge above)', empty: '(empty — lead not resolved on any tier)' },
       convId:    { source: '(from ElevenLabs)',                            empty: '(empty — EL call did not start)' },
@@ -1805,6 +1842,24 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       financing: { source: '(from custom records)',                        empty: '(empty — no custom record or missing field)' },
       usecase:   { source: '(derived in n8n)',                             empty: '(empty)' },
       expiry:    { source: '(from custom records)',                        empty: '(empty — no custom record or missing field)' },
+      tipSource:          { source: '(from webhook)',         empty: '(empty — keine Quelle angegeben)' },
+      aiAgentName:        { source: '(from webhook)',         empty: '(empty)' },
+      brandName:          { source: '(from webhook)',         empty: '(empty)' },
+      currentBusinessDay: { source: '(derived in n8n)',       empty: '(empty)' },
+    };
+
+    /* v3.25 — Per-agent visible-field allow-lists for the Resolved Variables card.
+       Anything not in the active agent's list is hidden (both <dt> and <dd>).
+       The DOM stays intact; we only toggle a class to flip display:none. */
+    const RV_FIELDS_BY_AGENT = {
+      finanzierung_uc2uc3: [
+        'leadId','convId','dossier','title','customer','phone','advisor',
+        'financing','usecase','expiry',
+      ],
+      leads_dsw: [
+        'leadId','convId','phone','advisor','tipSource',
+        'aiAgentName','brandName','currentBusinessDay',
+      ],
     };
 
     function setRvField(valEl, tagEl, val, metaKey) {
@@ -1846,8 +1901,24 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       else if (days !== '')                  expiry = days + ' Tage';
       setRvField(els.rvExpiry, els.rvExpiryTag, expiry, 'expiry');
 
-      // Badge
-      const src = (b.lead_id_source && String(b.lead_id_source)) || 'unknown';
+      // v3.25 — DSW-specific fields. Populated for every agent (cheap), then
+      // visibility is gated by RV_FIELDS_BY_AGENT below.
+      setRvField(els.rvTipSource,          els.rvTipSourceTag,          dv.tip_source || '',           'tipSource');
+      setRvField(els.rvAiAgentName,        els.rvAiAgentNameTag,        dv.ai_agent_name || '',        'aiAgentName');
+      setRvField(els.rvBrandName,          els.rvBrandNameTag,          dv.brand_name || '',           'brandName');
+      setRvField(els.rvCurrentBusinessDay, els.rvCurrentBusinessDayTag, dv.current_business_day || '', 'currentBusinessDay');
+
+      // v3.25 — Toggle row visibility (both <dt> and <dd>) by data-field.
+      const visible = RV_FIELDS_BY_AGENT[selectedAgent] || RV_FIELDS_BY_AGENT.finanzierung_uc2uc3;
+      const visibleSet = new Set(visible);
+      els.resolvedVarsCard.querySelectorAll('[data-field]').forEach(el => {
+        el.classList.toggle('hidden', !visibleSet.has(el.dataset.field));
+      });
+
+      // Badge — v3.25 force `created` for DSW (every call creates a fresh proxy lead).
+      const isFinanzierung = selectedAgent === FINANZIERUNG_AGENT;
+      const rawSrc = (b.lead_id_source && String(b.lead_id_source)) || 'unknown';
+      const src = isFinanzierung ? rawSrc : 'created';
       if (els.leadSourceBadge) {
         els.leadSourceBadge.textContent = LEAD_SOURCE_LABELS[src] || src;
         LEAD_SOURCE_BADGES.forEach(c => els.leadSourceBadge.classList.remove(c));
@@ -1860,7 +1931,6 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       // v3.24 — force-hide for non-finanzierung agents (DSW doesn't read custom records the same way).
       if (els.rvCustomRecordHint) {
         const crEmpty = !financingVal && !months && !days;
-        const isFinanzierung = selectedAgent === FINANZIERUNG_AGENT;
         els.rvCustomRecordHint.classList.toggle('hidden', !(isFinanzierung && crEmpty));
       }
 
