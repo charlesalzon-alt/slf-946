@@ -696,7 +696,8 @@
       <ul>
         <li><strong>Was ist das?</strong> Outbound-Trigger für den Wüstenrot-Finanzierung-Agenten. Beim Absenden des Formulars startet ein echter ElevenLabs-Anruf über den PriceHubble-n8n-Flow.</li>
         <li><strong>Microsite vs. Prototyp.</strong> Bei einem echten Microsite-Anruf liefern die PriceHubble-Lead-/Dossier-APIs sowohl <code>lead_id</code> als auch die Kundenidentität automatisch. Aus diesem Prototyp werden beide Werte manuell eingetragen. Variablen aus Custom Records (<code>financing_with</code>, <code>months_to_expiry</code>) sind nur dann gefüllt, wenn das Dossier in PriceHubble existiert <em>und</em> ein Loan-Custom-Record gepflegt ist.</li>
-        <li><strong><code>lead_id</code> ist wichtig.</strong> Stark empfohlen: eine echte <code>lead_id</code> eintragen (das Feld ist mit unserer Test-Lead vorbefüllt). Ohne <code>lead_id</code> fällt n8n auf Dossier-URN-Lookup oder Create-Lead zurück — beides funktioniert, bildet aber das Microsite-Verhalten nicht ab.</li>
+        <li data-agent="finanzierung_uc2uc3"><strong><code>lead_id</code> ist wichtig.</strong> Stark empfohlen: eine echte <code>lead_id</code> eintragen (das Feld ist mit unserer Test-Lead vorbefüllt). Ohne <code>lead_id</code> fällt n8n auf Dossier-URN-Lookup oder Create-Lead zurück — beides funktioniert, bildet aber das Microsite-Verhalten nicht ab.</li>
+        <li data-agent="leads_dsw">Bei DSW (Inbound Leads / Partner-Tipps) ist die <code>lead_id</code> nicht relevant — der Anruf reagiert auf einen neu eingegangenen Tipp, nicht auf einen bekannten Kontakt. Lassen Sie das Feld leer, n8n verwendet den Create-Lead-Branch.</li>
       </ul>
     </details>
 
@@ -1300,7 +1301,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     /* ───────────────────────────────────────────────────────────────
        CONSTANTS
     ─────────────────────────────────────────────────────────────── */
-    const STORAGE_KEY = 'ww-agent-sandbox-v82';
+    const STORAGE_KEY = 'ww-agent-sandbox-v83';
 
     function toggleDevMode() {
       document.body.classList.toggle('dev-mode');
@@ -1577,6 +1578,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
       selectedAgent = pill.dataset.agent;
       syncAgentPills();
       applyFieldRestrictions();
+      applyAgentTypeUI(selectedAgent);
       saveConfig();
       log('Switched to agent: ' + selectedAgent);
     });
@@ -1855,9 +1857,11 @@ Respect and efficiency. The customer did not ask for this call — earn their at
 
       // v3.23 — Show the custom-record diagnostic only when ALL three CR-backed vars are empty.
       // Catches the common "fired against a non-PH dossier" mistake.
+      // v3.24 — force-hide for non-finanzierung agents (DSW doesn't read custom records the same way).
       if (els.rvCustomRecordHint) {
         const crEmpty = !financingVal && !months && !days;
-        els.rvCustomRecordHint.classList.toggle('hidden', !crEmpty);
+        const isFinanzierung = selectedAgent === FINANZIERUNG_AGENT;
+        els.rvCustomRecordHint.classList.toggle('hidden', !(isFinanzierung && crEmpty));
       }
 
       // Raw payload pretty-print
@@ -1876,14 +1880,70 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     }
 
     /* v3.21 — toggle inline warning under the lead_id input.
-       v3.23 — also flip the soft warn-empty border on the input itself. */
+       v3.23 — also flip the soft warn-empty border on the input itself.
+       v3.24 — gate every lead_id stress treatment on selectedAgent. The DSW agent
+       handles inbound leads / partner tips and never calls back a known user, so
+       `lead_id` is not meaningful in that context — the field stays visible but
+       neutral (no pill, no warning, no warn-empty border, no restore button). */
     const TEST_LEAD_ID = 'b216c2fe-2edc-462b-a4d2-424a35f9eaf8';
+    const FINANZIERUNG_AGENT = 'finanzierung_uc2uc3';
+
     function refreshLeadIdWarning() {
       if (!els.leadId) return;
+      const isFinanzierung = selectedAgent === FINANZIERUNG_AGENT;
       const empty = !((els.leadId.value || '').trim());
-      if (els.leadIdWarning) els.leadIdWarning.classList.toggle('hidden', !empty);
-      els.leadId.classList.toggle('warn-empty', empty);
+      const showWarning = isFinanzierung && empty;
+      if (els.leadIdWarning) els.leadIdWarning.classList.toggle('hidden', !showWarning);
+      els.leadId.classList.toggle('warn-empty', showWarning);
     }
+
+    /* v3.24 — central UI adapter for the per-agent stress treatment.
+       Call on init (after loadConfig restores selectedAgent) and on every pill click. */
+    function applyAgentTypeUI(agent) {
+      const isFinanzierung = agent === FINANZIERUNG_AGENT;
+
+      // Banner: show only the <li> matching the current agent.
+      document.querySelectorAll('.testing-notes li[data-agent]').forEach(li => {
+        li.classList.toggle('hidden', li.dataset.agent !== agent);
+      });
+
+      // Lead-ID label pill ("Empfohlen für sauberen Test") — only meaningful for finanzierung.
+      const leadIdWrapper = els.leadId ? els.leadId.closest('div') : null;
+      if (leadIdWrapper) {
+        const pill = leadIdWrapper.querySelector('.pill-recommended');
+        if (pill) pill.classList.toggle('hidden', !isFinanzierung);
+      }
+
+      // Restore-test-lead button — only useful when the test lead matters.
+      if (els.restoreLeadIdBtn) {
+        els.restoreLeadIdBtn.classList.toggle('hidden', !isFinanzierung);
+      }
+
+      // Lead-ID pre-fill management. Only touch the field when it's empty OR still
+      // carrying the auto-applied TEST_LEAD_ID — never clobber a user-typed UUID.
+      if (els.leadId) {
+        const current = (els.leadId.value || '').trim();
+        if (isFinanzierung) {
+          if (current === '') {
+            els.leadId.value = TEST_LEAD_ID;
+          }
+        } else {
+          if (current === TEST_LEAD_ID) {
+            els.leadId.value = '';
+          }
+        }
+      }
+
+      // Custom-record diagnostic: force-hide for non-finanzierung agents
+      // regardless of payload contents. DSW doesn't read custom records the same way.
+      if (els.rvCustomRecordHint && !isFinanzierung) {
+        els.rvCustomRecordHint.classList.add('hidden');
+      }
+
+      // Sync warning + warn-empty border now that the agent context changed.
+      refreshLeadIdWarning();
+    }
+
     if (els.leadId) {
       els.leadId.addEventListener('input', refreshLeadIdWarning);
     }
@@ -1917,7 +1977,7 @@ Respect and efficiency. The customer did not ask for this call — earn their at
     ─────────────────────────────────────────────────────────────── */
     loadConfig();
     applyFieldRestrictions();
-    refreshLeadIdWarning();
+    applyAgentTypeUI(selectedAgent);
     log('Loaded agent: ' + selectedAgent);
   </script>
 </body>
